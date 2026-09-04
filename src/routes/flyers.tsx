@@ -14,11 +14,22 @@ import {
   Loader2,
   LogOut,
   Sparkles,
+  Trash,
+  AlertTriangle,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthView, useAuthSession } from "@/components/auth-view";
 import { brl, formatById, newId, type FlyerPage, type FlyerRow } from "@/lib/flyer-types";
 import { templateById } from "@/lib/templates";
+import { FlyerCreateDialog } from "@/components/flyer-create-dialog";
 
 export const Route = createFileRoute("/flyers")({
   component: FlyersPage,
@@ -96,6 +107,9 @@ function FlyersPage() {
   const queryClient = useQueryClient();
   const { session, authLoading } = useAuthSession();
   const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
 
   const userId = session?.user.id;
 
@@ -180,6 +194,23 @@ function FlyersPage() {
     queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
   }
 
+  async function handleDeleteAll() {
+    if (!session) return;
+    setDeletingAll(true);
+    try {
+      await supabase.from("flyers").delete().eq("user_id", session.user.id);
+      queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
+      setDeleteAllOpen(false);
+    } finally {
+      setDeletingAll(false);
+    }
+  }
+
+  function handleCreated(flyerId: string) {
+    queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
+    navigate({ to: "/flyers/$flyerId", params: { flyerId } });
+  }
+
   async function handleLogout() {
     await supabase.auth.signOut();
   }
@@ -218,12 +249,23 @@ function FlyersPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {flyers.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-destructive hover:text-destructive"
+                onClick={() => setDeleteAllOpen(true)}
+              >
+                <Trash className="w-4 h-4" />
+                Excluir tudo
+              </Button>
+            )}
             <Button variant="ghost" size="sm" className="gap-2" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
               Sair
             </Button>
-            <Button className="gap-2" onClick={handleCreate}>
-              <Plus className="w-4 h-4" />
+            <Button className="gap-2" onClick={() => setCreateOpen(true)}>
+              <Sparkles className="w-4 h-4" />
               Novo Encarte
             </Button>
           </div>
@@ -239,8 +281,19 @@ function FlyersPage() {
             className="max-w-sm"
           />
           <p className="text-sm text-muted-foreground shrink-0">
-            {flyers.length} {flyers.length === 1 ? "encarte" : "encartes"}
-          </p>
+          {flyers.length} {flyers.length === 1 ? "encarte" : "encartes"}
+        </p>
+        {flyers.length > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-destructive border-destructive/30 hover:text-destructive"
+            onClick={() => setDeleteAllOpen(true)}
+          >
+            <Trash className="w-3.5 h-3.5" />
+            Excluir todos
+          </Button>
+        )}
         </div>
 
         {error && (
@@ -370,6 +423,41 @@ function FlyersPage() {
             })}
           </div>
         )}
+        <Dialog open={deleteAllOpen} onOpenChange={setDeleteAllOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-destructive">
+                <AlertTriangle className="w-5 h-5" />
+                Excluir todos os encartes
+              </DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja excluir os {flyers.length} encarte{flyers.length > 1 ? 's' : ''}? Esta ação não pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setDeleteAllOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteAll}
+                disabled={deletingAll}
+                className="gap-1.5"
+              >
+                {deletingAll && <Loader2 className="w-4 h-4 animate-spin" />}
+                <Trash className="w-4 h-4" />
+                {deletingAll ? 'Excluindo...' : 'Excluir todos'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <FlyerCreateDialog
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          userId={userId || ''}
+          onCreated={handleCreated}
+        />
       </main>
     </div>
   );
