@@ -28,6 +28,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { AuthView, useAuthSession } from "@/components/auth-view";
 import { organizeFlyer } from "@/lib/ai.functions";
+import { OfferImportDialog } from "@/components/offer-import-dialog";
+import { ProductImageDialog } from "@/components/product-image-dialog";
 import {
   brl,
   formatById,
@@ -200,6 +202,9 @@ function FlyerEditorPage() {
   const [aiBusy, setAiBusy] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
 
+  const [importOpen, setImportOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+
   useEffect(() => {
     if (!session) {
       setLoaded(false);
@@ -335,6 +340,24 @@ function FlyerEditorPage() {
   function prevPage() {
     setActiveIndex((i) => Math.max(i - 1, 0));
     setSelectedOfferId(null);
+  }
+
+  function handleAddImported(items: Offer[]) {
+    setActivePageItems((prev) => [...prev, ...items]);
+  }
+
+  function handleReplacePage(items: Offer[]) {
+    setPages((prev) =>
+      prev.map((page, i) => (i === safeIndex ? { ...page, items } : page)),
+    );
+  }
+
+  function handleImageGenerated(image: string | null) {
+    if (!selectedOfferId) return;
+    updateOffer(selectedOfferId, {
+      imagePath: null,
+      imageUrl: image,
+    });
   }
 
   async function handleOrganize() {
@@ -522,8 +545,8 @@ function FlyerEditorPage() {
                     variant="outline"
                     size="sm"
                     className="gap-1"
-                    onClick={handleOrganize}
-                    disabled={aiBusy || offers.length === 0}
+                    onClick={() => setImportOpen(true)}
+                    disabled={aiBusy}
                   >
                     {aiBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                     IA
@@ -598,10 +621,16 @@ function FlyerEditorPage() {
                 <div className="text-center py-10 rounded-xl border border-dashed">
                   <ShoppingBag className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
                   <p className="text-sm text-muted-foreground mb-4">Esta página está vazia</p>
-                  <Button size="sm" className="gap-1" onClick={addOffer}>
-                    <Plus className="w-3 h-3" />
-                    Adicionar produto
-                  </Button>
+                  <div className="flex flex-col items-center gap-2">
+                    <Button size="sm" className="gap-1" onClick={() => setImportOpen(true)}>
+                      <Sparkles className="w-3 h-3" />
+                      Importar com IA
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1" onClick={addOffer}>
+                      <Plus className="w-3 h-3" />
+                      Adicionar manualmente
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -616,7 +645,12 @@ function FlyerEditorPage() {
                       Editar Oferta
                     </h3>
                     <div className="flex items-center gap-3">
-                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1 py-0" onClick={() => setImageDialogOpen(true)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs gap-1 py-0"
+                        onClick={() => setImageDialogOpen(true)}
+                      >
                         <Sparkles className="w-3 h-3" /> Imagem IA
                       </Button>
                       <span className="text-[11px] text-muted-foreground">
