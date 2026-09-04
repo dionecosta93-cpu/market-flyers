@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { parseOffers } from '@/lib/ai.functions';
-import { newId, type FlyerPage, type FlyerRow, type Offer } from '@/lib/flyer-types';
-import { supabase } from '@/components/supabase-client';
+import { newId, type FlyerPage, type Offer } from '@/lib/flyer-types';
+import { supabase } from '@/integrations/supabase/client';
 
 type Message = {
   id: string;
@@ -26,17 +26,20 @@ type FlyerCreateDialogProps = {
   onCreated: (flyerId: string) => void;
 };
 
-function toNewOffers(items: any[]): Offer[] {
-  return items.map((item) => ({
-    id: newId(),
-    name: String(item?.name ?? 'Produto').trim() || 'Produto',
-    brand: typeof item?.brand === 'string' ? item.brand.trim() : '',
-    size: typeof item?.size === 'string' ? item.size.trim() : '',
-    price: Number(item?.price) || 0,
-    oldPrice: item?.oldPrice == null ? null : Number(item.oldPrice),
-    category: typeof item?.category === 'string' ? item.category : 'Outros',
-    qty: typeof item?.qty === 'string' ? item.qty : '',
-  }));
+function toNewOffers(items: unknown[]): Offer[] {
+  return items.map((item: unknown) => {
+    const i = item as Record<string, unknown>;
+    return {
+      id: newId(),
+      name: String(i?.name ?? 'Produto').trim() || 'Produto',
+      brand: typeof i?.brand === 'string' ? i.brand.trim() : '',
+      size: typeof i?.size === 'string' ? i.size.trim() : '',
+      price: Number(i?.price) || 0,
+      oldPrice: i?.oldPrice == null ? null : Number(i.oldPrice),
+      category: typeof i?.category === 'string' ? i.category : 'Outros',
+      qty: typeof i?.qty === 'string' ? i.qty : '',
+    };
+  });
 }
 
 function messageFor(error: unknown): string {
@@ -103,6 +106,7 @@ export function FlyerCreateDialog({
   }, []);
 
   async function handleSubmit() {
+    if (!open) return;
     const text = input.trim();
     if (!text || busy) return;
 
@@ -122,6 +126,7 @@ export function FlyerCreateDialog({
           text: 'Não consegui identificar ofertas no texto. Tente descrever cada produto com nome e preço, por exemplo: "Pão de forma 500g 8,90, Manteiga 200g 12,49".',
         };
         setMessages((prev) => [...prev, errMsg]);
+        setBusy(false);
         return;
       }
 
@@ -203,12 +208,9 @@ export function FlyerCreateDialog({
         setBusy(true);
         try {
           const audioBase64 = await blobToBase64(blob);
-          const format = blob.type.includes('mp4') ? 'mp4' : 'webm';
-          // Simple transcription via parseOffers (treating as text since we don't have transcribe)
-          // Use a placeholder voice transcription simulation
           setInput('(áudio gravado — transcreva as ofertas no campo acima)');
-        } catch (error) {
-          const errMsg: Message = { id: newId(), role: 'assistant', text: messageFor(error) };
+        } catch (err) {
+          const errMsg: Message = { id: newId(), role: 'assistant', text: messageFor(err) };
           setMessages((prev) => [...prev, errMsg]);
         } finally {
           setBusy(false);
@@ -230,10 +232,10 @@ export function FlyerCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-lg flex flex-col max-h-[80vh]'>
+      <DialogContent className="sm:max-w-lg flex flex-col max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2'>
-            <Sparkles className='w-5 h-5 text-primary' />
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
             Criar encarte com IA
           </DialogTitle>
           <DialogDescription>
@@ -241,37 +243,35 @@ export function FlyerCreateDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className='flex-1 overflow-y-auto space-y-3 min-h-0 flex-1 flex flex-col'>
-          <div className='flex-1 overflow-y-auto space-y-3 min-h-0' style={{ maxHeight: '400px' }}>
-            {messages.map((msg) => (
+        <div className="flex-1 overflow-y-auto space-y-3 min-h-0" style={{ maxHeight: '400px' }}>
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
               <div
-                key={msg.id}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`rounded-xl px-4 py-2.5 text-sm max-w-[85%] ${
+                  msg.role === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-foreground'
+                }`}
               >
-                <div
-                  className={`rounded-xl px-4 py-2.5 text-sm max-w-[85%] ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-foreground'
-                  }`}
-                >
-                  {msg.text}
-                </div>
+                {msg.text}
               </div>
-            ))}
-            {busy && messages[messages.length - 1]?.role === 'user' && (
-              <div className='flex justify-start'>
-                <div className='rounded-xl px-4 py-2.5 text-sm bg-muted text-foreground flex items-center gap-2'>
-                  <Loader2 className='w-4 h-4 animate-spin' />
-                  Processando...
-                </div>
+            </div>
+          ))}
+          {busy && messages[messages.length - 1]?.role === 'user' && (
+            <div className="flex justify-start">
+              <div className="rounded-xl px-4 py-2.5 text-sm bg-muted text-foreground flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Processando...
               </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className='space-y-2 pt-2 border-t border-border'>
+        <div className="space-y-2 pt-2 border-t border-border">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -281,38 +281,38 @@ export function FlyerCreateDialog({
                 handleSubmit();
               }
             }}
-            placeholder='Descreva as ofertas... Ex: Arroz 5kg 29,90, Feijão 1kg 7,49, Leite 1L 4,99'
+            placeholder="Descreva as ofertas... Ex: Arroz 5kg 29,90, Feijão 1kg 7,49, Leite 1L 4,99"
             rows={3}
-            className='resize-none'
+            className="resize-none"
           />
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <Button
-              type='button'
+              type="button"
               variant={recording ? 'destructive' : 'outline'}
-              size='sm'
-              className='gap-1.5'
+              size="sm"
+              className="gap-1.5"
               onClick={toggleRecording}
               disabled={busy}
             >
               {recording ? (
                 <>
-                  <Square className='h-3.5 w-3.5' />
+                  <Square className="h-3.5 w-3.5" />
                   Parar
                 </>
               ) : (
                 <>
-                  <Mic className='h-3.5 w-3.5' />
+                  <Mic className="h-3.5 w-3.5" />
                   Gravar voz
                 </>
               )}
             </Button>
             <Button
-              type='button'
-              className='flex-1 gap-1.5'
+              type="button"
+              className="flex-1 gap-1.5"
               onClick={handleSubmit}
               disabled={busy || input.trim().length < 3}
             >
-              {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : <Send className='h-4 w-4' />}
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {busy ? 'Criando...' : 'Criar encarte'}
             </Button>
           </div>
