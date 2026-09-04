@@ -864,6 +864,21 @@ function FlyerEditorPage() {
             </div>
           </TabsContent>
         </Tabs>
+
+        <OfferImportDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          offers={offers}
+          onAddMany={handleAddImported}
+          onReplaceAll={handleReplacePage}
+        />
+
+        <ProductImageDialog
+          open={imageDialogOpen}
+          onOpenChange={setImageDialogOpen}
+          offer={selectedOffer}
+          onGenerated={handleImageGenerated}
+        />
       </aside>
 
       <main className="flex-1 p-6 lg:p-10 overflow-y-auto max-h-screen">
