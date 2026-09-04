@@ -615,9 +615,14 @@ function FlyerEditorPage() {
                       <Pencil className="w-4 h-4" />
                       Editar Oferta
                     </h3>
-                    <span className="text-[11px] text-muted-foreground">
-                      {selectedOffer.highlight ? "Em destaque" : "Normal"}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1 py-0" onClick={() => setImageDialogOpen(true)}>
+                        <Sparkles className="w-3 h-3" /> Imagem IA
+                      </Button>
+                      <span className="text-[11px] text-muted-foreground">
+                        {selectedOffer.highlight ? "Em destaque" : "Normal"}
+                      </span>
+                    </div>
                   </div>
                   <div className="space-y-3">
                     <div>
