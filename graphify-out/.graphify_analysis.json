@@ -1,6 +1,77 @@
 {
   "communities": {
     "0": [
+      "src_components_auth_view",
+      "src_components_auth_view_authview",
+      "src_components_auth_view_authview_handlesubmit",
+      "src_components_auth_view_minimalsession",
+      "src_components_auth_view_useauthsession",
+      "src_components_ui_card",
+      "src_components_ui_card_card",
+      "src_components_ui_card_cardcontent",
+      "src_components_ui_card_carddescription",
+      "src_components_ui_card_cardfooter",
+      "src_components_ui_card_cardheader",
+      "src_components_ui_card_cardtitle",
+      "src_components_ui_label",
+      "src_components_ui_label_label",
+      "src_components_ui_label_labelvariants",
+      "src_components_ui_slider",
+      "src_components_ui_slider_slider",
+      "src_components_ui_switch",
+      "src_components_ui_switch_switch",
+      "src_components_ui_tabs",
+      "src_components_ui_tabs_tabscontent",
+      "src_components_ui_tabs_tabslist",
+      "src_components_ui_tabs_tabstrigger",
+      "src_integrations_lovable_index",
+      "src_integrations_lovable_index_lovable",
+      "src_integrations_lovable_index_lovableauth",
+      "src_integrations_lovable_index_signinoptions",
+      "src_integrations_supabase_client",
+      "src_integrations_supabase_client_createsupabaseclient",
+      "src_integrations_supabase_client_createsupabasefetch",
+      "src_integrations_supabase_client_isnewsupabaseapikey",
+      "src_integrations_supabase_client_supabase",
+      "src_integrations_supabase_previewauthstorage",
+      "src_integrations_supabase_previewauthstorage_brokeredpreviewstorage",
+      "src_lib_flyer_types",
+      "src_lib_flyer_types_brl",
+      "src_lib_flyer_types_flyerpage",
+      "src_lib_flyer_types_flyerrow",
+      "src_lib_flyer_types_flyersettings",
+      "src_lib_flyer_types_formatbyid",
+      "src_lib_flyer_types_formats",
+      "src_lib_flyer_types_newid",
+      "src_lib_flyer_types_offer",
+      "src_lib_flyer_types_per_page_options",
+      "src_lib_flyer_types_priceparts",
+      "src_lib_templates",
+      "src_lib_templates_flyertemplate",
+      "src_lib_templates_templatebyid",
+      "src_lib_templates_templates",
+      "src_routes_flyers",
+      "src_routes_flyers_flyerid",
+      "src_routes_flyers_flyerid_default_settings",
+      "src_routes_flyers_flyerid_flyereditorpage",
+      "src_routes_flyers_flyerid_flyereditorpage_addoffer",
+      "src_routes_flyers_flyerid_flyereditorpage_deleteoffer",
+      "src_routes_flyers_flyerid_flyereditorpage_handleexport",
+      "src_routes_flyers_flyerid_flyereditorpage_handleorganize",
+      "src_routes_flyers_flyerid_flyereditorpage_nextpage",
+      "src_routes_flyers_flyerid_flyereditorpage_persistnow",
+      "src_routes_flyers_flyerid_flyereditorpage_prevpage",
+      "src_routes_flyers_flyerid_flyereditorpage_setactivepageitems",
+      "src_routes_flyers_flyerid_flyereditorpage_updateoffer",
+      "src_routes_flyers_flyerid_pagecanvas",
+      "src_routes_flyers_flyerspage",
+      "src_routes_flyers_flyerspage_handlecreate",
+      "src_routes_flyers_flyerspage_handledelete",
+      "src_routes_flyers_flyerspage_handleduplicate",
+      "src_routes_flyers_flyerspage_handlelogout",
+      "src_routes_flyers_flyerthumb"
+    ],
+    "1": [
       "eslint",
       "eslint_config_prettier",
       "eslint_js",
@@ -51,7 +122,7 @@
       "vite",
       "vitejs_plugin_react"
     ],
-    "1": [
+    "2": [
       "src_components_ui_alert_dialog",
       "src_components_ui_alert_dialog_alertdialogaction",
       "src_components_ui_alert_dialog_alertdialogcancel",
@@ -89,50 +160,15 @@
       "src_components_ui_popover_popovercontent",
       "src_components_ui_progress",
       "src_components_ui_progress_progress",
-      "src_lib_utils"
-    ],
-    "2": [
-      "src_components_ui_card",
-      "src_components_ui_card_card",
-      "src_components_ui_card_cardcontent",
-      "src_components_ui_card_carddescription",
-      "src_components_ui_card_cardfooter",
-      "src_components_ui_card_cardheader",
-      "src_components_ui_card_cardtitle",
-      "src_components_ui_separator",
-      "src_components_ui_separator_separator",
-      "src_components_ui_slider",
-      "src_components_ui_slider_slider",
-      "src_components_ui_switch",
-      "src_components_ui_switch_switch",
-      "src_components_ui_tabs",
-      "src_components_ui_tabs_tabscontent",
-      "src_components_ui_tabs_tabslist",
-      "src_components_ui_tabs_tabstrigger",
       "src_components_ui_textarea",
       "src_components_ui_textarea_textarea",
-      "src_lib_flyer_types",
-      "src_lib_flyer_types_brl",
-      "src_lib_flyer_types_flyerpage",
-      "src_lib_flyer_types_flyerrow",
-      "src_lib_flyer_types_flyersettings",
-      "src_lib_flyer_types_formatbyid",
-      "src_lib_flyer_types_formats",
-      "src_lib_flyer_types_newid",
-      "src_lib_flyer_types_offer",
-      "src_lib_flyer_types_per_page_options",
-      "src_lib_flyer_types_priceparts",
-      "src_routes_flyers",
-      "src_routes_flyers_flyerid",
-      "src_routes_flyers_flyerid_default_settings",
-      "src_routes_flyers_flyerid_flyereditorpage",
-      "src_routes_flyers_flyerid_mock_offers",
-      "src_routes_flyers_flyerspage",
-      "src_routes_flyers_mock_flyers"
+      "src_lib_utils"
     ],
     "3": [
       "src_components_ui_input",
       "src_components_ui_input_input",
+      "src_components_ui_separator",
+      "src_components_ui_separator_separator",
       "src_components_ui_sidebar",
       "src_components_ui_sidebar_sidebar",
       "src_components_ui_sidebar_sidebarcontent",
@@ -173,16 +209,10 @@
       "src_components_ui_accordion_accordioncontent",
       "src_components_ui_accordion_accordionitem",
       "src_components_ui_accordion_accordiontrigger",
-      "src_components_ui_context_menu",
-      "src_components_ui_context_menu_contextmenucheckboxitem",
-      "src_components_ui_context_menu_contextmenucontent",
-      "src_components_ui_context_menu_contextmenuitem",
-      "src_components_ui_context_menu_contextmenulabel",
-      "src_components_ui_context_menu_contextmenuradioitem",
-      "src_components_ui_context_menu_contextmenuseparator",
-      "src_components_ui_context_menu_contextmenushortcut",
-      "src_components_ui_context_menu_contextmenusubcontent",
-      "src_components_ui_context_menu_contextmenusubtrigger",
+      "src_components_ui_avatar",
+      "src_components_ui_avatar_avatar",
+      "src_components_ui_avatar_avatarfallback",
+      "src_components_ui_avatar_avatarimage",
       "src_components_ui_dropdown_menu",
       "src_components_ui_dropdown_menu_dropdownmenucheckboxitem",
       "src_components_ui_dropdown_menu_dropdownmenucontent",
@@ -202,6 +232,15 @@
       "src_components_ui_scroll_area",
       "src_components_ui_scroll_area_scrollarea",
       "src_components_ui_scroll_area_scrollbar",
+      "src_components_ui_table",
+      "src_components_ui_table_table",
+      "src_components_ui_table_tablebody",
+      "src_components_ui_table_tablecaption",
+      "src_components_ui_table_tablecell",
+      "src_components_ui_table_tablefooter",
+      "src_components_ui_table_tablehead",
+      "src_components_ui_table_tableheader",
+      "src_components_ui_table_tablerow",
       "src_lib_utils_cn"
     ],
     "5": [
@@ -241,41 +280,6 @@
       "src_lib_ai_functions_transcribeoffers"
     ],
     "6": [
-      "server_entry",
-      "src_integrations_lovable_index",
-      "src_integrations_lovable_index_lovable",
-      "src_integrations_lovable_index_lovableauth",
-      "src_integrations_lovable_index_signinoptions",
-      "src_integrations_supabase_auth_attacher",
-      "src_integrations_supabase_auth_attacher_attachsupabaseauth",
-      "src_integrations_supabase_client",
-      "src_integrations_supabase_client_createsupabaseclient",
-      "src_integrations_supabase_client_createsupabasefetch",
-      "src_integrations_supabase_client_isnewsupabaseapikey",
-      "src_integrations_supabase_client_supabase",
-      "src_integrations_supabase_previewauthstorage",
-      "src_integrations_supabase_previewauthstorage_brokeredpreviewstorage",
-      "src_lib_error_capture",
-      "src_lib_error_capture_consumelastcapturederror",
-      "src_lib_error_capture_describeerror",
-      "src_lib_error_capture_describestatus",
-      "src_lib_error_capture_iserrorlike",
-      "src_lib_error_capture_originalconsoleerror",
-      "src_lib_error_capture_record",
-      "src_lib_error_capture_safestringify",
-      "src_lib_error_page",
-      "src_lib_error_page_rendererrorpage",
-      "src_server",
-      "src_server_fetch",
-      "src_server_getserverentry",
-      "src_server_ish3swallowederrorbody",
-      "src_server_normalizecatastrophicssrresponse",
-      "src_server_serverentry",
-      "src_start",
-      "src_start_csrfmiddleware",
-      "src_start_errormiddleware"
-    ],
-    "7": [
       "src_lib_lovable_error_reporting",
       "src_lib_lovable_error_reporting_lovableerroroptions",
       "src_lib_lovable_error_reporting_lovableevents",
@@ -310,7 +314,7 @@
       "src_routetree_gen_tanstack_react_start",
       "src_start_startinstance"
     ],
-    "8": [
+    "7": [
       "ref_dom",
       "ref_dom_iterable",
       "ref_es2022",
@@ -343,6 +347,30 @@
       "tsconfig_compileroptions_types",
       "tsconfig_compileroptions_verbatimmodulesyntax",
       "tsconfig_include"
+    ],
+    "8": [
+      "server_entry",
+      "src_integrations_supabase_auth_attacher",
+      "src_integrations_supabase_auth_attacher_attachsupabaseauth",
+      "src_lib_error_capture",
+      "src_lib_error_capture_consumelastcapturederror",
+      "src_lib_error_capture_describeerror",
+      "src_lib_error_capture_describestatus",
+      "src_lib_error_capture_iserrorlike",
+      "src_lib_error_capture_originalconsoleerror",
+      "src_lib_error_capture_record",
+      "src_lib_error_capture_safestringify",
+      "src_lib_error_page",
+      "src_lib_error_page_rendererrorpage",
+      "src_server",
+      "src_server_fetch",
+      "src_server_getserverentry",
+      "src_server_ish3swallowederrorbody",
+      "src_server_normalizecatastrophicssrresponse",
+      "src_server_serverentry",
+      "src_start",
+      "src_start_csrfmiddleware",
+      "src_start_errormiddleware"
     ],
     "9": [
       "components",
@@ -421,23 +449,6 @@
       "tailwindcss_vite"
     ],
     "13": [
-      "src_components_ui_form",
-      "src_components_ui_form_formcontrol",
-      "src_components_ui_form_formdescription",
-      "src_components_ui_form_formfield",
-      "src_components_ui_form_formfieldcontext",
-      "src_components_ui_form_formfieldcontextvalue",
-      "src_components_ui_form_formitem",
-      "src_components_ui_form_formitemcontext",
-      "src_components_ui_form_formitemcontextvalue",
-      "src_components_ui_form_formlabel",
-      "src_components_ui_form_formmessage",
-      "src_components_ui_form_useformfield",
-      "src_components_ui_label",
-      "src_components_ui_label_label",
-      "src_components_ui_label_labelvariants"
-    ],
-    "14": [
       "src_components_ui_carousel",
       "src_components_ui_carousel_carousel",
       "src_components_ui_carousel_carouselapi",
@@ -453,6 +464,20 @@
       "src_components_ui_carousel_usecarousel",
       "src_components_ui_carousel_usecarouselparameters"
     ],
+    "14": [
+      "src_components_ui_form",
+      "src_components_ui_form_formcontrol",
+      "src_components_ui_form_formdescription",
+      "src_components_ui_form_formfield",
+      "src_components_ui_form_formfieldcontext",
+      "src_components_ui_form_formfieldcontextvalue",
+      "src_components_ui_form_formitem",
+      "src_components_ui_form_formitemcontext",
+      "src_components_ui_form_formitemcontextvalue",
+      "src_components_ui_form_formlabel",
+      "src_components_ui_form_formmessage",
+      "src_components_ui_form_useformfield"
+    ],
     "15": [
       "src_components_ui_chart",
       "src_components_ui_chart_chartconfig",
@@ -467,6 +492,18 @@
       "src_components_ui_chart_usechart"
     ],
     "16": [
+      "src_components_ui_context_menu",
+      "src_components_ui_context_menu_contextmenucheckboxitem",
+      "src_components_ui_context_menu_contextmenucontent",
+      "src_components_ui_context_menu_contextmenuitem",
+      "src_components_ui_context_menu_contextmenulabel",
+      "src_components_ui_context_menu_contextmenuradioitem",
+      "src_components_ui_context_menu_contextmenuseparator",
+      "src_components_ui_context_menu_contextmenushortcut",
+      "src_components_ui_context_menu_contextmenusubcontent",
+      "src_components_ui_context_menu_contextmenusubtrigger"
+    ],
+    "17": [
       "src_components_ui_sheet",
       "src_components_ui_sheet_sheetcontent",
       "src_components_ui_sheet_sheetcontentprops",
@@ -476,17 +513,6 @@
       "src_components_ui_sheet_sheetoverlay",
       "src_components_ui_sheet_sheettitle",
       "src_components_ui_sheet_sheetvariants"
-    ],
-    "17": [
-      "src_components_ui_table",
-      "src_components_ui_table_table",
-      "src_components_ui_table_tablebody",
-      "src_components_ui_table_tablecaption",
-      "src_components_ui_table_tablecell",
-      "src_components_ui_table_tablefooter",
-      "src_components_ui_table_tablehead",
-      "src_components_ui_table_tableheader",
-      "src_components_ui_table_tablerow"
     ],
     "18": [
       "src_components_ui_breadcrumb",
@@ -552,255 +578,243 @@
       "src_components_ui_input_otp_inputotpslot"
     ],
     "25": [
-      "src_components_ui_avatar",
-      "src_components_ui_avatar_avatar",
-      "src_components_ui_avatar_avatarfallback",
-      "src_components_ui_avatar_avatarimage"
-    ],
-    "26": [
-      "src_lib_templates",
-      "src_lib_templates_flyertemplate",
-      "src_lib_templates_templatebyid",
-      "src_lib_templates_templates"
-    ],
-    "27": [
       "node_crypto",
       "src_integrations_supabase_cron_auth",
       "src_integrations_supabase_cron_auth_authenticatecronrequest"
     ],
-    "28": [
+    "26": [
       "src_components_ui_sonner",
       "src_components_ui_sonner_toaster",
       "src_components_ui_sonner_toasterprops"
     ],
-    "29": [
+    "27": [
       "clsx",
       "package_dependencies_clsx"
     ],
-    "30": [
+    "28": [
       "cmdk",
       "package_dependencies_cmdk"
     ],
-    "31": [
+    "29": [
       "date_fns",
       "package_dependencies_date_fns"
     ],
-    "32": [
+    "30": [
       "embla_carousel_react",
       "package_dependencies_embla_carousel_react"
     ],
-    "33": [
+    "31": [
       "hookform_resolvers",
       "package_dependencies_hookform_resolvers"
     ],
-    "34": [
+    "32": [
       "html_to_image",
       "package_dependencies_html_to_image"
     ],
-    "35": [
+    "33": [
       "input_otp",
       "package_dependencies_input_otp"
     ],
-    "36": [
+    "34": [
       "jspdf",
       "package_dependencies_jspdf"
     ],
-    "37": [
+    "35": [
       "lovable_dev_cloud_auth_js",
       "package_dependencies_lovable_dev_cloud_auth_js"
     ],
-    "38": [
+    "36": [
       "lucide_react",
       "package_dependencies_lucide_react"
     ],
-    "39": [
+    "37": [
       "package_dependencies_radix_ui_react_accordion",
       "radix_ui_react_accordion"
     ],
-    "40": [
+    "38": [
       "package_dependencies_radix_ui_react_alert_dialog",
       "radix_ui_react_alert_dialog"
     ],
-    "41": [
+    "39": [
       "package_dependencies_radix_ui_react_aspect_ratio",
       "radix_ui_react_aspect_ratio"
     ],
-    "42": [
+    "40": [
       "package_dependencies_radix_ui_react_avatar",
       "radix_ui_react_avatar"
     ],
-    "43": [
+    "41": [
       "package_dependencies_radix_ui_react_checkbox",
       "radix_ui_react_checkbox"
     ],
-    "44": [
+    "42": [
       "package_dependencies_radix_ui_react_collapsible",
       "radix_ui_react_collapsible"
     ],
-    "45": [
+    "43": [
       "package_dependencies_radix_ui_react_context_menu",
       "radix_ui_react_context_menu"
     ],
-    "46": [
+    "44": [
       "package_dependencies_radix_ui_react_dialog",
       "radix_ui_react_dialog"
     ],
-    "47": [
+    "45": [
       "package_dependencies_radix_ui_react_dropdown_menu",
       "radix_ui_react_dropdown_menu"
     ],
-    "48": [
+    "46": [
       "package_dependencies_radix_ui_react_hover_card",
       "radix_ui_react_hover_card"
     ],
-    "49": [
+    "47": [
       "package_dependencies_radix_ui_react_label",
       "radix_ui_react_label"
     ],
-    "50": [
+    "48": [
       "package_dependencies_radix_ui_react_menubar",
       "radix_ui_react_menubar"
     ],
-    "51": [
+    "49": [
       "package_dependencies_radix_ui_react_navigation_menu",
       "radix_ui_react_navigation_menu"
     ],
-    "52": [
+    "50": [
       "package_dependencies_radix_ui_react_popover",
       "radix_ui_react_popover"
     ],
-    "53": [
+    "51": [
       "package_dependencies_radix_ui_react_progress",
       "radix_ui_react_progress"
     ],
-    "54": [
+    "52": [
       "package_dependencies_radix_ui_react_radio_group",
       "radix_ui_react_radio_group"
     ],
-    "55": [
+    "53": [
       "package_dependencies_radix_ui_react_scroll_area",
       "radix_ui_react_scroll_area"
     ],
-    "56": [
+    "54": [
       "package_dependencies_radix_ui_react_select",
       "radix_ui_react_select"
     ],
-    "57": [
+    "55": [
       "package_dependencies_radix_ui_react_separator",
       "radix_ui_react_separator"
     ],
-    "58": [
+    "56": [
       "package_dependencies_radix_ui_react_slot",
       "radix_ui_react_slot"
     ],
-    "59": [
+    "57": [
       "package_dependencies_radix_ui_react_tabs",
       "radix_ui_react_tabs"
     ],
-    "60": [
+    "58": [
       "package_dependencies_radix_ui_react_toggle",
       "radix_ui_react_toggle"
     ],
-    "61": [
+    "59": [
       "package_dependencies_radix_ui_react_tooltip",
       "radix_ui_react_tooltip"
     ],
-    "62": [
+    "60": [
       "package_dependencies_react_day_picker",
       "react_day_picker"
     ],
-    "63": [
+    "61": [
       "package_dependencies_react_dom",
       "react_dom"
     ],
-    "64": [
+    "62": [
       "package_dependencies_react_hook_form",
       "react_hook_form"
     ],
-    "65": [
+    "63": [
       "package_dependencies_react_resizable_panels",
       "react_resizable_panels"
     ],
-    "66": [
+    "64": [
       "package_dependencies_recharts",
       "recharts"
     ],
-    "67": [
+    "65": [
       "package_dependencies_sonner",
       "sonner"
     ],
-    "68": [
+    "66": [
       "package_dependencies_supabase_supabase_js",
       "supabase_supabase_js"
     ],
-    "69": [
+    "67": [
       "package_dependencies_tailwind_merge",
       "tailwind_merge"
     ],
-    "70": [
+    "68": [
       "package_dependencies_tanstack_react_query",
       "tanstack_react_query"
     ],
-    "71": [
+    "69": [
       "package_dependencies_tanstack_react_router",
       "tanstack_react_router"
     ],
-    "72": [
+    "70": [
       "package_dependencies_tanstack_react_start",
       "tanstack_react_start"
     ],
-    "73": [
+    "71": [
       "package_dependencies_tanstack_router_plugin",
       "tanstack_router_plugin"
     ],
-    "74": [
+    "72": [
       "package_dependencies_tw_animate_css",
       "tw_animate_css"
     ],
-    "75": [
+    "73": [
       "package_dependencies_vaul",
       "vaul"
     ],
-    "76": [
+    "74": [
       "package_dependencies_vite_tsconfig_paths",
       "vite_tsconfig_paths"
     ],
-    "77": [
+    "75": [
       "package_dependencies_zod",
       "zod"
     ],
-    "78": [
+    "76": [
       "eslint_config"
     ],
-    "79": [
+    "77": [
       "src_components_ui_aspect_ratio"
     ],
-    "80": [
+    "78": [
       "src_components_ui_collapsible"
     ],
-    "81": [
+    "79": [
       "vite_config"
     ]
   },
   "cohesion": {
-    "0": 0.04081632653061224,
-    "1": 0.07396870554765292,
-    "2": 0.07957957957957958,
-    "3": 0.07142857142857142,
-    "4": 0.10695187165775401,
+    "0": 0.05839727195225917,
+    "1": 0.04081632653061224,
+    "2": 0.06923076923076923,
+    "3": 0.06827880512091039,
+    "4": 0.09759759759759759,
     "5": 0.11051693404634581,
-    "6": 0.09659090909090909,
-    "7": 0.08522727272727272,
-    "8": 0.0625,
+    "6": 0.08522727272727272,
+    "7": 0.0625,
+    "8": 0.1471861471861472,
     "9": 0.10526315789473684,
     "10": 0.125,
     "11": 0.11764705882352941,
     "12": 0.13333333333333333,
-    "13": 0.19047619047619047,
-    "14": 0.18681318681318682,
+    "13": 0.18681318681318682,
+    "14": 0.22727272727272727,
     "15": 0.2545454545454545,
-    "16": 0.25,
-    "17": 0.2222222222222222,
+    "16": 0.2,
+    "17": 0.25,
     "18": 0.25,
     "19": 0.25,
     "20": 0.2857142857142857,
@@ -808,10 +822,10 @@
     "22": 0.42857142857142855,
     "23": 0.5,
     "24": 0.4,
-    "25": 0.5,
-    "26": 0.5,
-    "27": 0.6666666666666666,
-    "28": 0.6666666666666666,
+    "25": 0.6666666666666666,
+    "26": 0.6666666666666666,
+    "27": 1.0,
+    "28": 1.0,
     "29": 1.0,
     "30": 1.0,
     "31": 1.0,
@@ -862,9 +876,7 @@
     "76": 1.0,
     "77": 1.0,
     "78": 1.0,
-    "79": 1.0,
-    "80": 1.0,
-    "81": 1.0
+    "79": 1.0
   },
   "gods": [
     {
@@ -878,6 +890,11 @@
       "degree": 22
     },
     {
+      "id": "src_routes_flyers_flyerid_flyereditorpage",
+      "label": "FlyerEditorPage()",
+      "degree": 16
+    },
+    {
       "id": "src_components_ui_button_buttonvariants",
       "label": "buttonVariants",
       "degree": 9
@@ -885,6 +902,21 @@
     {
       "id": "src_components_ui_button_button",
       "label": "Button",
+      "degree": 9
+    },
+    {
+      "id": "src_lib_ai_functions_organizeflyer",
+      "label": "organizeFlyer",
+      "degree": 8
+    },
+    {
+      "id": "src_lib_flyer_types_newid",
+      "label": "newId()",
+      "degree": 8
+    },
+    {
+      "id": "src_routes_flyers_flyerspage",
+      "label": "FlyersPage()",
       "degree": 8
     },
     {
@@ -896,26 +928,6 @@
       "id": "src_lib_ai_functions_logusage",
       "label": "logUsage()",
       "degree": 7
-    },
-    {
-      "id": "components_aliases",
-      "label": "aliases",
-      "degree": 6
-    },
-    {
-      "id": "src_lib_ai_functions_gateway",
-      "label": "gateway()",
-      "degree": 6
-    },
-    {
-      "id": "src_lib_error_page_rendererrorpage",
-      "label": "renderErrorPage()",
-      "degree": 6
-    },
-    {
-      "id": "components_tailwind",
-      "label": "tailwind",
-      "degree": 5
     }
   ],
   "surprises": [
