@@ -2,9 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const GATEWAY = "https://ai.gateway.lovable.dev/v1";
-const TEXT_MODEL = "google/gemini-3.7-flash";
-const IMAGE_MODEL = "google/gemini-3.1-flash-image";
+const OPENAI_API_URL = "https://api.openai.com/v1";
+const TEXT_MODEL = "gpt-4.1-mini";
+const TRANSCRIPTION_MODEL = "gpt-4o-mini-transcribe";
+const IMAGE_MODEL = "gpt-image-1";
 
 type GatewayError = { status: number; message: string };
 type UnknownRecord = Record<string, unknown>;
@@ -14,9 +15,9 @@ function asRecord(value: unknown): UnknownRecord {
 }
 
 async function gateway(path: string, body: unknown): Promise<unknown> {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("A IA não está configurada neste projeto (LOVABLE_API_KEY ausente).");
-  const res = await fetch(`${GATEWAY}${path}`, {
+  const key = process.env["OPENAI_API_KEY"];
+  if (!key) throw new Error("A IA não está configurada neste projeto (OPENAI_API_KEY ausente).");
+  const res = await fetch(`${OPENAI_API_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify(body),
@@ -33,11 +34,35 @@ async function gateway(path: string, body: unknown): Promise<unknown> {
     const err: GatewayError = { status: res.status, message };
     if (res.status === 429)
       throw new Error("A IA está recebendo muitos pedidos. Tente novamente em alguns segundos.");
-    if (res.status === 402) throw new Error(`Créditos de IA insuficientes: ${message}`);
-    if (res.status === 403) throw new Error(`A IA está bloqueada para este projeto: ${message}`);
-    throw new Error(`Falha na IA (${err.status}): ${err.message}`);
+    if (res.status === 402) throw new Error(`Créditos da OpenAI insuficientes: ${message}`);
+    if (res.status === 403) throw new Error(`A OpenAI bloqueou esta solicitação: ${message}`);
+    throw new Error(`Falha na OpenAI (${err.status}): ${err.message}`);
   }
   return res.json();
+}
+
+async function transcribeAudio(audioBase64: string, format: string): Promise<string> {
+  const key = process.env["OPENAI_API_KEY"];
+  if (!key) throw new Error("A IA não está configurada neste projeto (OPENAI_API_KEY ausente).");
+
+  const audio = Uint8Array.from(atob(audioBase64), (character) => character.charCodeAt(0));
+  const form = new FormData();
+  form.append("model", TRANSCRIPTION_MODEL);
+  form.append("language", "pt");
+  form.append("file", new Blob([audio], { type: `audio/${format}` }), `ofertas.${format}`);
+
+  const res = await fetch(`${OPENAI_API_URL}/audio/transcriptions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}` },
+    body: form,
+  });
+  if (!res.ok) {
+    const message = await res.text();
+    throw new Error(`Falha na transcrição da OpenAI (${res.status}): ${message}`);
+  }
+
+  const text = asRecord(await res.json()).text;
+  return typeof text === "string" ? text : "";
 }
 
 async function logUsage(userId: string, kind: string, meta: Record<string, unknown> = {}) {
@@ -79,24 +104,7 @@ export const transcribeOffers = createServerFn({ method: "POST" })
     z.object({ audioBase64: z.string().min(10), format: z.string().min(2) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const json = await gateway("/chat/completions", {
-      model: TEXT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Você transcreve áudio em português do Brasil. Devolva SOMENTE a transcrição literal, sem comentários.",
-        },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: "Transcreva este áudio de ofertas de supermercado." },
-            { type: "input_audio", input_audio: { data: data.audioBase64, format: data.format } },
-          ],
-        },
-      ],
-    });
-    const text = firstText(json).trim();
+    const text = (await transcribeAudio(data.audioBase64, data.format)).trim();
     await logUsage(context.userId, "transcricao", { chars: text.length });
     return { text };
   });
@@ -172,9 +180,9 @@ Mantenha o campo "id" de cada produto existente. Responda APENAS JSON: {"product
         },
       ],
     });
-    const parsed = extractJson(firstText(json));
+    const parsed = asRecord(extractJson(firstText(json)));
     await logUsage(context.userId, "correcao", {});
-    return { products: Array.isArray(parsed?.products) ? parsed.products : [] };
+    return { products: Array.isArray(parsed.products) ? parsed.products : [] };
   });
 
 /** AI layout organisation: returns ordered ids + highlights + suggested per_page */
@@ -200,13 +208,13 @@ Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"cha
         },
       ],
     });
-    const parsed = extractJson(firstText(json));
+    const parsed = asRecord(extractJson(firstText(json)));
     await logUsage(context.userId, "organizacao", {});
     return {
-      order: Array.isArray(parsed?.order) ? parsed.order.map(String) : [],
-      highlight: Array.isArray(parsed?.highlight) ? parsed.highlight.map(String) : [],
-      headline: typeof parsed?.headline === "string" ? parsed.headline : "",
-      subheadline: typeof parsed?.subheadline === "string" ? parsed.subheadline : "",
+      order: Array.isArray(parsed.order) ? parsed.order.map(String) : [],
+      highlight: Array.isArray(parsed.highlight) ? parsed.highlight.map(String) : [],
+      headline: typeof parsed.headline === "string" ? parsed.headline : "",
+      subheadline: typeof parsed.subheadline === "string" ? parsed.subheadline : "",
     };
   });
 
@@ -230,12 +238,14 @@ Produto genérico, sem logotipos, sem marcas registradas e sem texto legível na
 Fundo branco puro, iluminação de estúdio, produto centralizado e completo, alta nitidez, estilo catálogo.`;
     const json = await gateway("/images/generations", {
       model: IMAGE_MODEL,
-      messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
-      modalities: ["image", "text"],
+      prompt,
+      size: "1024x1024",
+      quality: "medium",
     });
-    const url: string | undefined =
-      json?.choices?.[0]?.message?.images?.[0]?.image_url?.url ??
-      (json?.data?.[0]?.b64_json ? `data:image/png;base64,${json.data[0].b64_json}` : undefined);
+    const images = asRecord(json).data;
+    const firstImage = Array.isArray(images) ? asRecord(images[0]) : {};
+    const b64Json = firstImage.b64_json;
+    const url = typeof b64Json === "string" ? `data:image/png;base64,${b64Json}` : undefined;
     if (!url) throw new Error("A IA não retornou uma imagem para este produto.");
     await logUsage(context.userId, "imagem", { product: data.name });
     return { dataUrl: url };
