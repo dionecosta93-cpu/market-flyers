@@ -16,6 +16,10 @@ import {
   Sparkles,
   Trash,
   AlertTriangle,
+  Store,
+  Mic,
+  Download,
+  FileText,
 } from "lucide-react";
 import {
   Dialog,
@@ -38,15 +42,12 @@ export const Route = createFileRoute("/flyers")({
 const DEFAULT_TITLE = "Novo encarte";
 
 function FlyerThumb({ flyer }: { flyer: FlyerRow }) {
-  const tpl = templateById(flyer.template || "tradicional");
+  const tpl = templateById(flyer.template || "oferta-forte");
   const firstPage = Array.isArray(flyer.pages) && flyer.pages.length > 0 ? flyer.pages[0] : null;
   const items = (firstPage?.items || []).slice(0, 4);
 
   return (
-    <div
-      className="relative w-full h-full overflow-hidden"
-      style={{ backgroundColor: tpl.bg }}
-    >
+    <div className="relative w-full h-full overflow-hidden" style={{ backgroundColor: tpl.bg }}>
       <div className="px-3 py-2" style={{ backgroundColor: tpl.header, color: tpl.headerText }}>
         <p className="text-sm font-bold leading-tight truncate">
           {(flyer.settings as { headline?: string })?.headline || flyer.title}
@@ -65,18 +66,11 @@ function FlyerThumb({ flyer }: { flyer: FlyerRow }) {
                 color: tpl.cardText,
               }}
             >
-              <p
-                className="text-[11px] leading-tight font-medium truncate"
-                style={{ fontWeight: 700 }}
-              >
+              <p className="text-[11px] leading-tight font-medium truncate" style={{ fontWeight: 700 }}>
                 {offer.name}
               </p>
-              {offer.brand && (
-                <p className="text-[8px] leading-tight opacity-70 truncate">{offer.brand}</p>
-              )}
-              {offer.size && (
-                <p className="text-[8px] leading-tight opacity-60 truncate">{offer.size}</p>
-              )}
+              {offer.brand && <p className="text-[8px] leading-tight opacity-70 truncate">{offer.brand}</p>}
+              {offer.size && <p className="text-[8px] leading-tight opacity-60 truncate">{offer.size}</p>}
               <div className="mt-auto pt-1">
                 <span
                   className="inline-block rounded px-1.5 py-0.5 text-[10px] font-extrabold"
@@ -90,10 +84,7 @@ function FlyerThumb({ flyer }: { flyer: FlyerRow }) {
         </div>
       ) : (
         <div className="flex items-center justify-center h-2/3">
-          <p
-            className="text-xs font-medium"
-            style={{ color: tpl.headerText }}
-          >
+          <p className="text-xs font-medium" style={{ color: tpl.headerText }}>
             Sem ofertas ainda
           </p>
         </div>
@@ -131,69 +122,6 @@ function FlyersPage() {
     enabled: !!session,
   });
 
-  async function handleCreate() {
-    if (!session) return;
-    const { data, error } = await supabase
-      .from("flyers")
-      .insert({
-        user_id: session.user.id,
-        title: DEFAULT_TITLE,
-        template: "tradicional",
-        format: "ig_feed",
-        per_page: 8,
-        pages: [{ id: newId(), items: [] }] as any,
-        settings: {
-          storeName: "",
-          headline: "OFERTAS DA SEMANA",
-          subheadline: "Aproveite os melhores preços",
-          validity: "",
-          fontScale: 1,
-          showFooter: true,
-        } as any,
-        status: "rascunho",
-      })
-      .select("id")
-      .single();
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    navigate({ to: "/flyers/$flyerId", params: { flyerId: data.id } });
-  }
-
-  async function handleDuplicate(flyer: FlyerRow) {
-    if (!session) return;
-    const { data: original } = await supabase
-      .from("flyers")
-      .select("*")
-      .eq("id", flyer.id)
-      .single();
-    if (!original) return;
-
-    await supabase.from("flyers").insert({
-      user_id: session.user.id,
-      title: `${original.title || DEFAULT_TITLE} (cópia)`,
-      template: original.template || "tradicional",
-      format: original.format || "ig_feed",
-      per_page: original.per_page ?? 8,
-      pages: original.pages,
-      settings: original.settings,
-      status: "rascunho",
-    });
-
-    queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
-  }
-
-  async function handleDelete(flyer: FlyerRow) {
-    if (!session) return;
-    if (!window.confirm(`Excluir o encarte "${flyer.title}"?`)) return;
-
-    await supabase.from("flyers").delete().eq("id", flyer.id);
-    queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
-  }
-
   async function handleDeleteAll() {
     if (!session) return;
     setDeletingAll(true);
@@ -228,77 +156,101 @@ function FlyersPage() {
   }
 
   const filtered = flyers.filter((f) =>
-    String(f.title || "")
-      .toLowerCase()
-      .includes(search.trim().toLowerCase()),
+    String(f.title || "").toLowerCase().includes(search.trim().toLowerCase()),
   );
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="bg-background border-b border-border sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0">
-              <ShoppingBag className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-lg font-semibold text-foreground truncate">Market Flyers</h1>
-              <p className="text-xs text-muted-foreground truncate">
-                {session.user.email || "Crie encartes profissionais"}
-              </p>
-            </div>
+      {/* Hero Header */}
+      <header className="bg-gradient-to-br from-[#d91a1a] via-[#b91c1c] to-[#991b1b] text-white">
+        <div className="max-w-6xl mx-auto px-4 py-10 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur mb-6">
+            <ShoppingBag className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight mb-3">
+            FALE SUAS OFERTAS.
+            <br />
+            <span className="text-[#ffd400]">A IA CRIA SEU ENCARTE.</span>
+          </h1>
+          <p className="text-white/80 text-sm sm:text-base max-w-md mx-auto mb-8">
+            Produtos, imagens e design organizados automaticamente em poucos minutos.
+          </p>
+          <Button
+            size="lg"
+            className="gap-2 bg-white text-[#d91a1a] hover:bg-white/90 font-bold text-base px-8 h-12 rounded-xl shadow-lg"
+            onClick={() => setCreateOpen(true)}
+          >
+            <Sparkles className="w-5 h-5" />
+            CRIAR NOVO ENCARTE
+          </Button>
+        </div>
+      </header>
+
+      {/* Navigation bar */}
+      <div className="bg-white border-b border-border sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-6">
+            <button
+              className="flex flex-col items-center gap-1 text-[#d91a1a] font-semibold text-sm"
+              onClick={() => setCreateOpen(true)}
+            >
+              <div className="w-10 h-10 rounded-xl bg-[#d91a1a]/10 flex items-center justify-center">
+                <Plus className="w-5 h-5 text-[#d91a1a]" />
+              </div>
+              Novo
+            </button>
+            <button
+              className="flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground font-medium text-sm"
+              onClick={() => {}}
+            >
+              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                <Store className="w-5 h-5" />
+              </div>
+              Minha Loja
+            </button>
           </div>
           <div className="flex items-center gap-2">
-            {flyers.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-destructive hover:text-destructive"
-                onClick={() => setDeleteAllOpen(true)}
-              >
-                <Trash className="w-4 h-4" />
-                Excluir tudo
-              </Button>
-            )}
             <Button variant="ghost" size="sm" className="gap-2" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
               Sair
             </Button>
-            <Button className="gap-2" onClick={() => setCreateOpen(true)}>
-              <Sparkles className="w-4 h-4" />
-              Novo Encarte
-            </Button>
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+        {/* Meus Encartes section */}
         <div className="flex items-center justify-between gap-4 mb-6">
-          <Input
-            placeholder="Buscar encartes..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm"
-          />
-          <p className="text-sm text-muted-foreground shrink-0">
-          {flyers.length} {flyers.length === 1 ? "encarte" : "encartes"}
-        </p>
-        {flyers.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 text-destructive border-destructive/30 hover:text-destructive"
-            onClick={() => setDeleteAllOpen(true)}
-          >
-            <Trash className="w-3.5 h-3.5" />
-            Excluir todos
-          </Button>
-        )}
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Meus Encartes
+          </h2>
+          <div className="flex items-center gap-3">
+            {flyers.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-destructive border-destructive/30 hover:text-destructive"
+                onClick={() => setDeleteAllOpen(true)}
+              >
+                <Trash className="w-3.5 h-3.5" />
+                Limpar tudo
+              </Button>
+            )}
+            {flyers.length > 0 && (
+              <Input
+                placeholder="Buscar encartes..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-56"
+              />
+            )}
+          </div>
         </div>
 
         {error && (
           <div className="rounded-lg bg-destructive/10 text-destructive px-4 py-3 text-sm mb-6">
-            Não foi possível carregar seus encartes. Verifique sua conexão e tente novamente.
+            Não foi possível carregar seus encartes. Verifique sua conexão.
           </div>
         )}
 
@@ -307,22 +259,24 @@ function FlyersPage() {
             <Loader2 className="w-7 h-7 animate-spin text-muted-foreground" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-              <ShoppingBag className="w-7 h-7 text-muted-foreground/60" />
+          <div className="text-center py-16 rounded-2xl border-2 border-dashed border-border bg-muted/30">
+            <div className="w-14 h-14 rounded-2xl bg-[#d91a1a]/10 flex items-center justify-center mx-auto mb-4">
+              <ShoppingBag className="w-7 h-7 text-[#d91a1a]/60" />
             </div>
             <h3 className="text-lg font-medium text-foreground mb-2">
-              {search ? "Nenhum encarte encontrado" : "Nenhum encarte ainda"}
+              {search ? "Nenhum encarte encontrado" : "Comece pelo seu primeiro encarte"}
             </h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
               {search
                 ? "Tente buscar por outro termo"
-                : "Use a IA para montar encartes profissionais em poucos minutos."}
+                : "Clique em 'Novo' ou use o botão acima para criar um encarte com IA."}
             </p>
-            <Button className="gap-2" onClick={handleCreate}>
-              <Sparkles className="w-4 h-4" />
-              Criar primeiro encarte
-            </Button>
+            {!search && (
+              <Button className="gap-2" onClick={() => setCreateOpen(true)}>
+                <Sparkles className="w-4 h-4" />
+                Criar primeiro encarte
+              </Button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -330,41 +284,32 @@ function FlyersPage() {
               const fmt = formatById(flyer.format || "ig_feed");
               const pagesCount = Array.isArray(flyer.pages) ? flyer.pages.length : 0;
               const createdAt = new Date(flyer.created_at);
+              const totalItems = (flyer.pages || []).reduce(
+                (sum, p) => sum + (p.items?.length || 0),
+                0,
+              );
 
               return (
                 <Card
                   key={flyer.id}
-                  className="group cursor-pointer hover:shadow-md transition-shadow"
+                  className="group cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all"
                   onClick={() =>
-                    navigate({
-                      to: "/flyers/$flyerId",
-                      params: { flyerId: flyer.id },
-                    })
+                    navigate({ to: "/flyers/$flyerId", params: { flyerId: flyer.id } })
                   }
                 >
                   <CardContent className="p-3">
-                    <div className="aspect-[3/4] rounded-lg overflow-hidden bg-muted mb-3 relative">
+                    <div className="aspect-[3/4] rounded-lg overflow-hidden bg-muted mb-3 relative shadow-sm">
                       <FlyerThumb flyer={flyer} />
-                      <div className="absolute top-2 right-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 bg-background/80 backdrop-blur"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </div>
                     </div>
 
-                    <h3 className="font-medium text-foreground truncate">{flyer.title}</h3>
+                    <h3 className="font-semibold text-foreground truncate">{flyer.title}</h3>
                     <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground mt-1">
                       <span>
-                        {fmt.label} · {pagesCount || 1}{" "}
+                        {totalItems} {totalItems === 1 ? "produto" : "produtos"} · {pagesCount || 1}{" "}
                         {pagesCount === 1 ? "página" : "páginas"}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded-full ${
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                           flyer.status === "published"
                             ? "bg-emerald-100 text-emerald-700"
                             : "bg-yellow-100 text-yellow-700"
@@ -377,17 +322,14 @@ function FlyersPage() {
                       {createdAt.toLocaleDateString("pt-BR")}
                     </p>
 
-                    <div className="flex items-center gap-1 mt-3 pt-3 border-t border-border group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 mt-3 pt-3 border-t border-border opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button
                         variant="ghost"
                         size="sm"
                         className="gap-1 flex-1 text-foreground"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate({
-                            to: "/flyers/$flyerId",
-                            params: { flyerId: flyer.id },
-                          });
+                          navigate({ to: "/flyers/$flyerId", params: { flyerId: flyer.id } });
                         }}
                       >
                         <Pencil className="w-3 h-3" />
@@ -396,22 +338,13 @@ function FlyersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="gap-1 flex-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDuplicate(flyer);
-                        }}
-                      >
-                        <Copy className="w-3 h-3" />
-                        Duplicar
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
                         className="text-destructive hover:text-destructive"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDelete(flyer);
+                          if (!window.confirm(`Excluir "${flyer.title}"?`)) return;
+                          supabase.from("flyers").delete().eq("id", flyer.id).then(() => {
+                            queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
+                          });
                         }}
                       >
                         <Trash2 className="w-3 h-3" />
@@ -423,15 +356,16 @@ function FlyersPage() {
             })}
           </div>
         )}
+
         <Dialog open={deleteAllOpen} onOpenChange={setDeleteAllOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-destructive">
                 <AlertTriangle className="w-5 h-5" />
-                Excluir todos os encartes
+                Limpar todos os encartes
               </DialogTitle>
               <DialogDescription>
-                Tem certeza que deseja excluir os {flyers.length} encarte{flyers.length > 1 ? 's' : ''}? Esta ação não pode ser desfeita.
+                Tem certeza? Todos os {flyers.length} encarte{flyers.length > 1 ? "s" : ""} serão excluídos. Esta ação não pode ser desfeita.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2">
@@ -446,7 +380,7 @@ function FlyersPage() {
               >
                 {deletingAll && <Loader2 className="w-4 h-4 animate-spin" />}
                 <Trash className="w-4 h-4" />
-                {deletingAll ? 'Excluindo...' : 'Excluir todos'}
+                {deletingAll ? "Excluindo..." : "Excluir tudo"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -455,7 +389,7 @@ function FlyersPage() {
         <FlyerCreateDialog
           open={createOpen}
           onOpenChange={setCreateOpen}
-          userId={userId || ''}
+          userId={userId || ""}
           onCreated={handleCreated}
         />
       </main>
