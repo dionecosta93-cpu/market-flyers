@@ -181,6 +181,7 @@ export type Database = {
           category: string | null
           created_at: string
           id: string
+          image_source: string | null
           image_url: string | null
           last_price: number | null
           name: string
@@ -194,6 +195,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
+          image_source?: string | null
           image_url?: string | null
           last_price?: number | null
           name: string
@@ -207,6 +209,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
+          image_source?: string | null
           image_url?: string | null
           last_price?: number | null
           name?: string
@@ -222,6 +225,7 @@ export type Database = {
           address: string | null
           created_at: string
           email: string | null
+          footer_text: string | null
           full_name: string | null
           id: string
           instagram: string | null
@@ -237,6 +241,7 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
+          footer_text?: string | null
           full_name?: string | null
           id: string
           instagram?: string | null
@@ -252,6 +257,7 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
+          footer_text?: string | null
           full_name?: string | null
           id?: string
           instagram?: string | null
