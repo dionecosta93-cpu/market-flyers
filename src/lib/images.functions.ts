@@ -24,7 +24,9 @@ function norm(value: string) {
 }
 
 function tokens(value: string) {
-  return norm(value).split(" ").filter((t) => t.length > 2);
+  return norm(value)
+    .split(" ")
+    .filter((t) => t.length > 2);
 }
 
 /** Pontua o quanto um produto encontrado corresponde ao produto pedido. */
@@ -53,7 +55,10 @@ function scoreCandidate(
   return score;
 }
 
-async function searchOpenFoodFacts(query: string, wanted: { name: string; brand: string; size: string }) {
+async function searchOpenFoodFacts(
+  query: string,
+  wanted: { name: string; brand: string; size: string },
+) {
   const url = `${OFF_ENDPOINT}?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=16&fields=product_name,product_name_pt,brands,quantity,image_front_url,code`;
   const res = await fetch(url, {
     headers: { "User-Agent": "MarketFlyers/1.0 (encartes de supermercado)" },
@@ -75,7 +80,9 @@ async function searchOpenFoodFacts(query: string, wanted: { name: string; brand:
       url: image,
       title: [name, brand, size].filter(Boolean).join(" · "),
       source: "Open Food Facts",
-      sourceUrl: code ? `https://world.openfoodfacts.org/product/${code}` : "https://world.openfoodfacts.org",
+      sourceUrl: code
+        ? `https://world.openfoodfacts.org/product/${code}`
+        : "https://world.openfoodfacts.org",
       score: scoreCandidate(wanted, { name, brand, size }),
     });
   }
@@ -157,7 +164,9 @@ export const searchProductImages = createServerFn({ method: "POST" })
 /** Baixa a imagem escolhida e devolve em base64 para que a exportação saia sem falhas. */
 export const importImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { url: string }) => z.object({ url: z.string().min(4).max(2000) }).parse(input))
+  .inputValidator((input: { url: string }) =>
+    z.object({ url: z.string().min(4).max(2000) }).parse(input),
+  )
   .handler(async ({ data }) => {
     if (data.url.startsWith("data:image/")) return { dataUrl: data.url };
     let parsed: URL;
@@ -166,14 +175,16 @@ export const importImage = createServerFn({ method: "POST" })
     } catch {
       throw new Error("Endereço de imagem inválido.");
     }
-    if (parsed.protocol !== "https:") throw new Error("Só aceitamos imagens em endereços seguros (https).");
+    if (parsed.protocol !== "https:")
+      throw new Error("Só aceitamos imagens em endereços seguros (https).");
 
     const res = await fetch(parsed.toString());
     if (!res.ok) throw new Error("Não conseguimos baixar essa imagem. Tente outra.");
     const type = res.headers.get("content-type") ?? "image/jpeg";
     if (!type.startsWith("image/")) throw new Error("O endereço não aponta para uma imagem.");
     const buffer = await res.arrayBuffer();
-    if (buffer.byteLength > 4_000_000) throw new Error("Essa imagem é muito grande. Escolha outra.");
+    if (buffer.byteLength > 4_000_000)
+      throw new Error("Essa imagem é muito grande. Escolha outra.");
     const base64 = Buffer.from(buffer).toString("base64");
     return { dataUrl: `data:${type};base64,${base64}` };
   });

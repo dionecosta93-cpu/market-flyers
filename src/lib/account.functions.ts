@@ -14,8 +14,9 @@ export const ensureAccount = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
     const email = (context.claims as { email?: string } | undefined)?.email ?? null;
-    const meta = (context.claims as { user_metadata?: { full_name?: string; name?: string } } | undefined)
-      ?.user_metadata;
+    const meta = (
+      context.claims as { user_metadata?: { full_name?: string; name?: string } } | undefined
+    )?.user_metadata;
 
     const { data: existing } = await supabaseAdmin
       .from("profiles")
@@ -38,7 +39,9 @@ export const ensureAccount = createServerFn({ method: "POST" })
 
     const isAdmin = !!email && ADMIN_EMAILS.includes(email.toLowerCase());
     const role = isAdmin ? "admin" : "user";
-    await supabaseAdmin.from("user_roles").upsert({ user_id: userId, role }, { onConflict: "user_id,role" });
+    await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: userId, role }, { onConflict: "user_id,role" });
 
     return { isAdmin };
   });

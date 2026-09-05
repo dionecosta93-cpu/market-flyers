@@ -22,3 +22,16 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## OpenAI
+
+Os recursos de IA usam a API da OpenAI no servidor. Configure a chave antes de
+executar o app localmente ou de fazer o deploy:
+
+```sh
+OPENAI_API_KEY=sk-...
+```
+
+Nunca exponha essa variável com o prefixo `VITE_` e não a envie ao repositório.
+O app usa `gpt-4.1-mini` para texto, `gpt-4o-mini-transcribe` para transcrição
+e `gpt-image-1` para gerar imagens de produtos.
