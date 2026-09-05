@@ -58,7 +58,10 @@ export function ProductImageDialog({
       });
       setCandidates(result.candidates);
       if (result.candidates.length === 0) {
-        setMessage({ type: "err", text: "Não encontramos uma imagem adequada. Envie a sua ou gere com a IA." });
+        setMessage({
+          type: "err",
+          text: "Não encontramos uma imagem adequada. Envie a sua ou gere com a IA.",
+        });
       }
     } catch (error) {
       setMessage({
@@ -88,7 +91,7 @@ export function ProductImageDialog({
   const currentImage = offer.imageUrl || null;
   const descriptor = [offer.brand, offer.name, offer.size].filter(Boolean).join(" ") || "Produto";
 
-  async function useCandidate(candidate: ImageCandidate) {
+  async function selectCandidate(candidate: ImageCandidate) {
     setBusy(true);
     setMessage(null);
     try {
@@ -146,7 +149,10 @@ export function ProductImageDialog({
     } catch (error) {
       setMessage({
         type: "err",
-        text: error instanceof Error ? error.message : "Não foi possível gerar a imagem. Tente novamente.",
+        text:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível gerar a imagem. Tente novamente.",
       });
     } finally {
       setBusy(false);
@@ -176,12 +182,18 @@ export function ProductImageDialog({
 
           {currentImage ? (
             <div className="rounded-lg border border-border bg-muted p-3 flex items-center justify-center">
-              <img src={currentImage} alt={offer.name} className="max-h-40 max-w-full object-contain" />
+              <img
+                src={currentImage}
+                alt={offer.name}
+                className="max-h-40 max-w-full object-contain"
+              />
             </div>
           ) : (
             <div className="rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center">
               <ImagePlus className="mx-auto h-7 w-7 text-muted-foreground/60" />
-              <p className="mt-2 text-sm text-muted-foreground">Nenhuma imagem neste produto ainda.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Nenhuma imagem neste produto ainda.
+              </p>
             </div>
           )}
 
@@ -211,7 +223,7 @@ export function ProductImageDialog({
                         key={candidate.url}
                         type="button"
                         disabled={busy}
-                        onClick={() => useCandidate(candidate)}
+                        onClick={() => selectCandidate(candidate)}
                         className="group rounded-lg border border-border bg-white p-2 hover:border-primary transition-colors text-left"
                       >
                         <img
@@ -232,7 +244,13 @@ export function ProductImageDialog({
                       Não encontramos uma imagem adequada para este produto.
                     </p>
                   )}
-                  <Button variant="outline" size="sm" className="gap-1.5" onClick={runSearch} disabled={busy}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={runSearch}
+                    disabled={busy}
+                  >
                     <Search className="h-3.5 w-3.5" /> Pesquisar novamente
                   </Button>
                 </>
@@ -276,7 +294,11 @@ export function ProductImageDialog({
                 Use só quando não existir uma foto real adequada do produto.
               </p>
               <Button onClick={handleGenerate} disabled={busy} className="w-full gap-2">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
                 {busy ? "Gerando imagem..." : "Gerar imagem com IA"}
               </Button>
             </TabsContent>

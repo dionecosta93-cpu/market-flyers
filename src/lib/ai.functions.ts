@@ -7,8 +7,13 @@ const TEXT_MODEL = "google/gemini-3.7-flash";
 const IMAGE_MODEL = "google/gemini-3.1-flash-image";
 
 type GatewayError = { status: number; message: string };
+type UnknownRecord = Record<string, unknown>;
 
-async function gateway(path: string, body: unknown): Promise<any> {
+function asRecord(value: unknown): UnknownRecord {
+  return value !== null && typeof value === "object" ? (value as UnknownRecord) : {};
+}
+
+async function gateway(path: string, body: unknown): Promise<unknown> {
   const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new Error("A IA não está configurada neste projeto (LOVABLE_API_KEY ausente).");
   const res = await fetch(`${GATEWAY}${path}`, {
@@ -26,7 +31,8 @@ async function gateway(path: string, body: unknown): Promise<any> {
       /* keep raw text */
     }
     const err: GatewayError = { status: res.status, message };
-    if (res.status === 429) throw new Error("A IA está recebendo muitos pedidos. Tente novamente em alguns segundos.");
+    if (res.status === 429)
+      throw new Error("A IA está recebendo muitos pedidos. Tente novamente em alguns segundos.");
     if (res.status === 402) throw new Error(`Créditos de IA insuficientes: ${message}`);
     if (res.status === 403) throw new Error(`A IA está bloqueada para este projeto: ${message}`);
     throw new Error(`Falha na IA (${err.status}): ${err.message}`);
@@ -43,11 +49,15 @@ async function logUsage(userId: string, kind: string, meta: Record<string, unkno
   }
 }
 
-function firstText(json: any): string {
-  return json?.choices?.[0]?.message?.content ?? "";
+function firstText(json: unknown): string {
+  const choices = asRecord(json).choices;
+  if (!Array.isArray(choices)) return "";
+  const message = asRecord(choices[0]).message;
+  const content = asRecord(message).content;
+  return typeof content === "string" ? content : "";
 }
 
-function extractJson(raw: string): any {
+function extractJson(raw: string): unknown {
   const cleaned = raw
     .replace(/^```(?:json)?/i, "")
     .replace(/```$/i, "")
@@ -107,7 +117,9 @@ Responda APENAS com JSON: {"products":[...]}. Se nada for identificável, {"prod
 
 export const parseOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { text: string }) => z.object({ text: z.string().min(2).max(8000) }).parse(input))
+  .inputValidator((input: { text: string }) =>
+    z.object({ text: z.string().min(2).max(8000) }).parse(input),
+  )
   .handler(async ({ data, context }) => {
     const json = await gateway("/chat/completions", {
       model: TEXT_MODEL,
@@ -117,20 +129,23 @@ export const parseOffers = createServerFn({ method: "POST" })
         { role: "user", content: data.text },
       ],
     });
-    const parsed = extractJson(firstText(json));
-    const products = Array.isArray(parsed?.products) ? parsed.products : [];
+    const parsed = asRecord(extractJson(firstText(json)));
+    const products = Array.isArray(parsed.products) ? parsed.products : [];
     await logUsage(context.userId, "interpretacao", { count: products.length });
     return {
-      products: products.map((p: any) => ({
-        name: String(p?.name ?? "").trim() || "Produto",
-        brand: String(p?.brand ?? "").trim(),
-        size: String(p?.size ?? "").trim(),
-        price: Number(p?.price ?? 0) || 0,
-        oldPrice: p?.oldPrice == null ? null : Number(p.oldPrice) || null,
-        category: String(p?.category ?? "Outros").trim(),
-        qty: String(p?.qty ?? "").trim(),
-        confident: p?.confident !== false,
-      })),
+      products: products.map((value) => {
+        const p = asRecord(value);
+        return {
+          name: String(p?.name ?? "").trim() || "Produto",
+          brand: String(p?.brand ?? "").trim(),
+          size: String(p?.size ?? "").trim(),
+          price: Number(p?.price ?? 0) || 0,
+          oldPrice: p?.oldPrice == null ? null : Number(p.oldPrice) || null,
+          category: String(p?.category ?? "Outros").trim(),
+          qty: String(p?.qty ?? "").trim(),
+          confident: p.confident !== false,
+        };
+      }),
     };
   });
 
@@ -179,7 +194,10 @@ export const organizeFlyer = createServerFn({ method: "POST" })
 Organize para equilíbrio visual: agrupe por categoria, alterne nomes longos e curtos, e destaque de 1 a 2 produtos com melhor apelo de preço.
 Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"chamada curta em maiúsculas","subheadline":"texto curto"}`,
         },
-        { role: "user", content: JSON.stringify({ products: data.products, perPage: data.perPage }) },
+        {
+          role: "user",
+          content: JSON.stringify({ products: data.products, perPage: data.perPage }),
+        },
       ],
     });
     const parsed = extractJson(firstText(json));
