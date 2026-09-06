@@ -37,7 +37,7 @@ async function gateway(path: string, body: unknown): Promise<any> {
 async function logUsage(userId: string, kind: string, meta: Record<string, unknown> = {}) {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("ai_usage").insert({ user_id: userId, kind, meta });
+    await supabaseAdmin.from("ai_usage").insert({ user_id: userId, kind, meta: meta as never });
   } catch (error) {
     console.error("ai_usage log failed", error);
   }

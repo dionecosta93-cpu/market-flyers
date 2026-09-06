@@ -249,7 +249,7 @@ function FlyerEditorPage() {
         setLoaded(true);
         setRowLoading(false);
       })
-      .catch((err) => {
+      .then(undefined, (err: unknown) => {
         if (cancelled) return;
         console.error(err);
         setLoadError("Erro ao carregar o encarte.");
@@ -366,7 +366,7 @@ function FlyerEditorPage() {
     setAiBusy(true);
     setSaveState("saving");
     try {
-      const result = await organizeFlyer({
+      const result = await organizeFlyer({ data: {
         products: flat.map((o) => ({
           id: o.id,
           name: o.name,
@@ -376,7 +376,7 @@ function FlyerEditorPage() {
           oldPrice: o.oldPrice ?? null,
         })),
         perPage,
-      });
+      } });
 
       const byId = new Map(flat.map((o) => [o.id, o]));
       const ordered: Offer[] = [];

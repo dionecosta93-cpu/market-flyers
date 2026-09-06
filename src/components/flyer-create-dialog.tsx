@@ -31,13 +31,13 @@ function toNewOffers(items: unknown[]): Offer[] {
     const i = item as Record<string, unknown>;
     return {
       id: newId(),
-      name: String(i?.name ?? 'Produto').trim() || 'Produto',
-      brand: typeof i?.brand === 'string' ? i.brand.trim() : '',
-      size: typeof i?.size === 'string' ? i.size.trim() : '',
-      price: Number(i?.price) || 0,
-      oldPrice: i?.oldPrice == null ? null : Number(i.oldPrice),
-      category: typeof i?.category === 'string' ? i.category : 'Outros',
-      qty: typeof i?.qty === 'string' ? i.qty : '',
+      name: String(i['name'] ?? 'Produto').trim() || 'Produto',
+      brand: typeof i['brand'] === 'string' ? (i['brand'] as string).trim() : '',
+      size: typeof i['size'] === 'string' ? (i['size'] as string).trim() : '',
+      price: Number(i['price']) || 0,
+      oldPrice: i['oldPrice'] == null ? null : Number(i.oldPrice),
+      category: typeof i['category'] === 'string' ? i.category : 'Outros',
+      qty: typeof i['qty'] === 'string' ? i.qty : '',
     };
   });
 }
@@ -116,7 +116,7 @@ export function FlyerCreateDialog({
     setBusy(true);
 
     try {
-      const result = await parseOffers({ text });
+      const result = await parseOffers({ data: { text } });
       const items = toNewOffers(result.products ?? []);
 
       if (items.length === 0) {

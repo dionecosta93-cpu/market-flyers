@@ -108,7 +108,7 @@ export function OfferImportDialog({
     setBusy(true);
     setMessage(null);
     try {
-      const result = await parseOffers({ text });
+      const result = await parseOffers({ data: { text } });
       const items = toNewOffers(result.products ?? []);
       if (items.length === 0) {
         throw new Error('Não identifiquei ofertas no texto. Tente de outra forma.');
@@ -147,14 +147,14 @@ export function OfferImportDialog({
         category: offer.category || '',
         qty: offer.qty || '',
       }));
-      const result = await correctOffers({ command, products: payload });
+      const result = await correctOffers({ data: { command, products: payload } });
       const source = Array.isArray(result.products) ? result.products : [];
       if (source.length === 0) {
         throw new Error('A correção não retornou produtos válidos.');
       }
       const nextOffers: Offer[] = source.map((item: any) => {
         const known = offers.find((offer) => offer.id === item?.id);
-        const fallback = known ?? {};
+        const fallback: Partial<Offer> = known ?? {};
         return {
           ...(known ? { ...known } : {}),
           id: known?.id ?? newId(),
@@ -212,7 +212,7 @@ export function OfferImportDialog({
         try {
           const audioBase64 = await blobToBase64(blob);
           const format = blob.type.includes('mp4') ? 'mp4' : 'webm';
-          const transcription = await transcribeOffers({ audioBase64, format });
+          const transcription = await transcribeOffers({ data: { audioBase64, format } });
           const text = (transcription.text || '').trim();
           if (!text) {
             throw new Error('Transcrevi o áudio, mas não consegui ler as ofertas. Tente falar mais devagar.');

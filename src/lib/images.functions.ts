@@ -230,8 +230,8 @@ export const rememberProducts = createServerFn({ method: "POST" })
               size: product.size ?? "",
               category: product.category ?? null,
               last_price: product.price ?? null,
-              image_url: product.imageUrl ?? undefined,
-              image_source: product.imageSource ?? undefined,
+              image_url: product.imageUrl ?? null,
+              image_source: product.imageSource ?? null,
               times_used: (existing.times_used ?? 0) + 1,
             })
             .eq("id", existing.id);

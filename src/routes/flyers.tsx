@@ -114,7 +114,7 @@ function FlyersPage() {
       const { data, error } = await supabase
         .from("flyers")
         .select("*")
-        .eq("user_id", userId)
+        .eq("user_id", userId as string)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as FlyerRow[];
