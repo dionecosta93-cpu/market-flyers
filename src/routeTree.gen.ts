@@ -11,41 +11,39 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FlyersRouteImport } from './routes/flyers'
-import { Route as FlyerEditorRouteImport } from './routes/flyers/$flyerId'
+import { Route as FlyersFlyerIdRouteImport } from './routes/flyers/$flyerId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-
 const FlyersRoute = FlyersRouteImport.update({
   id: '/flyers',
   path: '/flyers',
   getParentRoute: () => rootRouteImport,
 } as any)
-
-const FlyerEditorRoute = FlyerEditorRouteImport.update({
-  id: '/flyers/$flyerId',
-  path: '/flyers/$flyerId',
+const FlyersFlyerIdRoute = FlyersFlyerIdRouteImport.update({
+  id: '/$flyerId',
+  path: '/$flyerId',
   getParentRoute: () => FlyersRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute,
-  '/flyers': typeof FlyersRoute,
-  '/flyers/$flyerId': typeof FlyerEditorRoute,
+  '/': typeof IndexRoute
+  '/flyers': typeof FlyersRouteWithChildren
+  '/flyers/$flyerId': typeof FlyersFlyerIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute,
-  '/flyers': typeof FlyersRoute,
-  '/flyers/$flyerId': typeof FlyerEditorRoute,
+  '/': typeof IndexRoute
+  '/flyers': typeof FlyersRouteWithChildren
+  '/flyers/$flyerId': typeof FlyersFlyerIdRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport,
-  '/': typeof IndexRoute,
-  '/flyers': typeof FlyersRoute,
-  '/flyers/$flyerId': typeof FlyerEditorRoute,
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/flyers': typeof FlyersRouteWithChildren
+  '/flyers/$flyerId': typeof FlyersFlyerIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -56,8 +54,8 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute,
-  FlyersRoute: typeof FlyersRoute,
+  IndexRoute: typeof IndexRoute
+  FlyersRoute: typeof FlyersRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -78,17 +76,28 @@ declare module '@tanstack/react-router' {
     }
     '/flyers/$flyerId': {
       id: '/flyers/$flyerId'
-      path: '/flyers/$flyerId'
+      path: '/$flyerId'
       fullPath: '/flyers/$flyerId'
-      preLoaderRoute: typeof FlyerEditorRouteImport
+      preLoaderRoute: typeof FlyersFlyerIdRouteImport
       parentRoute: typeof FlyersRoute
     }
   }
 }
 
+interface FlyersRouteChildren {
+  FlyersFlyerIdRoute: typeof FlyersFlyerIdRoute
+}
+
+const FlyersRouteChildren: FlyersRouteChildren = {
+  FlyersFlyerIdRoute: FlyersFlyerIdRoute,
+}
+
+const FlyersRouteWithChildren =
+  FlyersRoute._addFileChildren(FlyersRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FlyersRoute: FlyersRoute,
+  FlyersRoute: FlyersRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
