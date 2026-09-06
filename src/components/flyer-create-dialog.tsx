@@ -35,9 +35,9 @@ function toNewOffers(items: unknown[]): Offer[] {
       brand: typeof i['brand'] === 'string' ? (i['brand'] as string).trim() : '',
       size: typeof i['size'] === 'string' ? (i['size'] as string).trim() : '',
       price: Number(i['price']) || 0,
-      oldPrice: i['oldPrice'] == null ? null : Number(i.oldPrice),
-      category: typeof i['category'] === 'string' ? i.category : 'Outros',
-      qty: typeof i['qty'] === 'string' ? i.qty : '',
+      oldPrice: i['oldPrice'] == null ? null : Number(i['oldPrice']),
+      category: typeof i['category'] === 'string' ? i['category'] : 'Outros',
+      qty: typeof i['qty'] === 'string' ? i['qty'] : '',
     };
   });
 }

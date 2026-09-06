@@ -380,7 +380,7 @@ function FlyerEditorPage() {
 
       const byId = new Map(flat.map((o) => [o.id, o]));
       const ordered: Offer[] = [];
-      result.order.forEach((id) => {
+      result.order.forEach((id: string) => {
         const item = byId.get(String(id));
         if (item) {
           ordered.push({ ...item, highlight: result.highlight.includes(String(id)) });

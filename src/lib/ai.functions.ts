@@ -195,7 +195,7 @@ Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"cha
 /** Generates a clean product image for flyer composition. Returns a data URL. */
 export const generateProductImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; brand?: string; size?: string; category?: string }) =>
+  .inputValidator((input: { name: string; brand?: string | undefined; size?: string | undefined; category?: string | undefined }) =>
     z
       .object({
         name: z.string().min(1).max(120),
