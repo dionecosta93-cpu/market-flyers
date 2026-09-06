@@ -201,12 +201,12 @@ function FlyersPage() {
             </button>
             <button
               className="flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground font-medium text-sm"
-              onClick={() => {}}
+              onClick={() => navigate({ to: "/loja" })}
             >
               <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
                 <Store className="w-5 h-5" />
               </div>
-              Minha Loja
+              Dados do mercado
             </button>
           </div>
           <div className="flex items-center gap-2">

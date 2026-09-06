@@ -9,7 +9,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { parseOffers } from '@/lib/ai.functions';
+import { parseOffers, transcribeOffers } from '@/lib/ai.functions';
+import { fetchStoreProfile, storeProfileToSettings } from '@/lib/store-profile';
 import { newId, type FlyerPage, type Offer } from '@/lib/flyer-types';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -142,15 +143,15 @@ export function FlyerCreateDialog({
         .insert({
           user_id: userId,
           title: 'Novo encarte',
-          template: 'tradicional',
+          template: 'oferta-forte',
           format: 'ig_feed',
           per_page: 8,
           pages: [{ id: newId(), items }] as unknown as FlyerPage[],
           settings: {
+            ...storeProfileToSettings(await fetchStoreProfile(userId)),
             headline: 'OFERTAS DA SEMANA',
             subheadline: 'Aproveite os melhores preços',
             fontScale: 1,
-            showFooter: true,
           },
           status: 'rascunho',
         })
@@ -208,7 +209,15 @@ export function FlyerCreateDialog({
         setBusy(true);
         try {
           const audioBase64 = await blobToBase64(blob);
-          setInput('(áudio gravado — transcreva as ofertas no campo acima)');
+          const format = blob.type.includes('mp4') ? 'mp4' : 'webm';
+          const transcription = await transcribeOffers({ data: { audioBase64, format } });
+          const text = (transcription.text || '').trim();
+          if (!text) throw new Error('Não consegui entender o áudio. Tente falar mais devagar.');
+          setInput(text);
+          setMessages((prev) => [
+            ...prev,
+            { id: newId(), role: 'assistant', text: 'Transcrevi seu áudio. Revise o texto e clique em Criar encarte.' },
+          ]);
         } catch (err) {
           const errMsg: Message = { id: newId(), role: 'assistant', text: messageFor(err) };
           setMessages((prev) => [...prev, errMsg]);

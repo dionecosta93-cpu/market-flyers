@@ -41,7 +41,7 @@ export const TEMPLATES: FlyerTemplate[] = [
     uppercaseNames: true,
     headerLayout: "logo-left",
     showPrice: true,
-    showImage: false,
+    showImage: true,
     cardStyle: "shadow",
   },
   {
@@ -85,7 +85,7 @@ export const TEMPLATES: FlyerTemplate[] = [
     uppercaseNames: true,
     headerLayout: "center",
     showPrice: true,
-    showImage: false,
+    showImage: true,
     cardStyle: "shadow",
   },
 ];
