@@ -131,7 +131,77 @@ async function callChat(params: {
   return firstText(json);
 }
 
-/** Transcrição de áudio para texto via OpenAI Whisper */
+/** Pesquisa real na internet usando OpenAI Responses API com web_search */
+async function searchProductImageOnWeb(params: {
+  name: string;
+  brand?: string;
+  size?: string;
+}): Promise<ImageCandidate[]> {
+  const config = getAiConfig();
+
+  if (config.provider !== "openai") {
+    return [];
+  }
+
+  const query = [params.brand, params.name, params.size, "embalagem original"]
+    .filter(Boolean)
+    .join(" ");
+
+  const body: Record<string, unknown> = {
+    model: "gpt-4o",
+    tools: [{ type: "web_search" }],
+    input: `Encontre uma imagem REAL da embalagem original deste produto de supermercado: ${query}. Procure URLs diretas de imagens (.jpg, .jpeg, .png, .webp) em sites oficiais, grandes supermercados ou distribuidores. Responda APENAS um JSON com até 5 imagens: [{"url":"https://...","source":"site","title":"descricao","confidence":0.9}]`,
+    max_output_tokens: 600,
+  };
+
+  const res = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error(`web_search failed (${res.status}): ${text}`);
+    return [];
+  }
+
+  const json = await res.json();
+  const raw = json?.output_text ?? json?.text ?? firstText(json);
+
+  const cleaned = String(raw)
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/i, "")
+    .trim();
+
+  let parsed: Array<{ url?: string; source?: string; title?: string; confidence?: number }> = [];
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch {
+    console.error("web_search json parse failed", cleaned.slice(0, 200));
+    return [];
+  }
+
+  const items = parsed
+    .filter((item) => typeof item.url === "string" && /^https?:\/\//i.test(item.url))
+    .map((item) => ({
+      url: String(item.url),
+      title: String(item.title ?? query),
+      source: String(item.source ?? "Web"),
+      sourceUrl: String(item.url),
+      score: Number(item.confidence ?? 0.7) * 100,
+    }))
+    .slice(0, 5);
+
+  console.log(`web_search results for "${query}":`, items.length, items.map((i) => i.url));
+  return items;
+}
+
+export { searchProductImageOnWeb };
+
 async function callAudioTranscription(audioBase64: string, format: string): Promise<string> {
   const config = getAiConfig();
 

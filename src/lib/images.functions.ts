@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { validateProductImage } from "@/lib/ai.functions";
+import { validateProductImage, searchProductImageOnWeb } from "@/lib/ai.functions";
 
 export type ImageCandidate = {
   url: string;
@@ -111,6 +111,7 @@ export const searchProductImages = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const wanted = { name: data.name, brand: data.brand ?? "", size: data.size ?? "" };
+    console.log("[image-search] start", wanted);
     const candidates: ImageCandidate[] = [];
 
     // 1. Biblioteca do usuário (mais rápido e já aprovado por ele)
@@ -135,8 +136,9 @@ export const searchProductImages = createServerFn({ method: "POST" })
           visionMatches: true,
         });
       });
+      console.log("[image-search] library candidates:", candidates.length);
     } catch (error) {
-      console.error("library lookup failed", error);
+      console.error("[image-search] library lookup failed", error);
     }
 
     // 2. Base pública de produtos — busca específica (nome + marca + peso)
@@ -152,10 +154,11 @@ export const searchProductImages = createServerFn({ method: "POST" })
         const found = await searchOpenFoodFacts(query, wanted);
         publicCandidates.push(...found);
       } catch (error) {
-        console.error("openfoodfacts failed", error);
+        console.error("[image-search] openfoodfacts failed", error);
       }
       if (publicCandidates.length >= 8) break;
     }
+    console.log("[image-search] openfoodfacts candidates:", publicCandidates.length);
 
     const seen = new Set<string>();
     const uniquePublic: ImageCandidate[] = [];
@@ -165,9 +168,31 @@ export const searchProductImages = createServerFn({ method: "POST" })
         uniquePublic.push(c);
       }
     }
+    console.log("[image-search] unique public candidates:", uniquePublic.length);
 
-    // 3. Validação visual com GPT-4o Vision para candidatos públicos
+    // 3. Fallback: busca real na internet via OpenAI Responses API + web_search
+    if (uniquePublic.length < 3 && wanted.name) {
+      try {
+        const webCandidates = await searchProductImageOnWeb({
+          name: wanted.name,
+          brand: wanted.brand || undefined,
+          size: wanted.size || undefined,
+        });
+        console.log("[image-search] web_search candidates:", webCandidates.length);
+        for (const c of webCandidates) {
+          if (!seen.has(c.url)) {
+            seen.add(c.url);
+            uniquePublic.push(c);
+          }
+        }
+      } catch (error) {
+        console.error("[image-search] web image search failed", error);
+      }
+    }
+
+    // 4. Validação visual com GPT-4o Vision para candidatos públicos
     const toValidate = uniquePublic.slice(0, 4);
+    console.log("[image-search] vision validation queue:", toValidate.length);
     if (toValidate.length > 0 && wanted.name) {
       const validationResults = await Promise.allSettled(
         toValidate.map(async (candidate) => {
@@ -180,7 +205,7 @@ export const searchProductImages = createServerFn({ method: "POST" })
             });
             return { candidate, result };
           } catch (error) {
-            console.error("vision validation failed for", candidate.url, error);
+            console.error("[image-search] vision validation failed for", candidate.url, error);
             return { candidate, result: { score: 0, matches: false, detectedName: "", detectedBrand: "", detectedSize: "", reasoning: "Erro na validação visual" } as { score: number; matches: boolean; detectedName: string; detectedBrand: string; detectedSize: string; reasoning: string } };
           }
         }),
@@ -204,7 +229,9 @@ export const searchProductImages = createServerFn({ method: "POST" })
 
     const scored = [...candidates, ...uniquePublic];
     scored.sort((a, b) => (b.score || 0) - (a.score || 0));
-    return { candidates: scored.slice(0, 8) };
+    const result = scored.slice(0, 8);
+    console.log("[image-search] final candidates:", result.length, result.map((i) => ({ url: i.url, source: i.source, score: i.score })));
+    return { candidates: result };
   });
 
 /** Baixa a imagem escolhida e devolve em base64 para que a exportação saia sem falhas. */
