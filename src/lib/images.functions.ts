@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { validateProductImage } from "@/lib/ai.functions";
 
 export type ImageCandidate = {
   url: string;
@@ -9,6 +10,9 @@ export type ImageCandidate = {
   sourceUrl: string;
   score: number;
   fromLibrary?: boolean;
+  visionScore?: number;
+  visionMatches?: boolean;
+  visionReasoning?: string;
 };
 
 const OFF_ENDPOINT = "https://world.openfoodfacts.org/cgi/search.pl";
@@ -125,14 +129,10 @@ export const searchProductImages = createServerFn({ method: "POST" })
           title: [row.name, row.brand, row.size].filter(Boolean).join(" · "),
           source: "Sua biblioteca",
           sourceUrl: row.image_source ?? "",
-          score:
-            100 +
-            scoreCandidate(wanted, {
-              name: row.name ?? "",
-              brand: row.brand ?? "",
-              size: row.size ?? "",
-            }),
+          score: 100,
           fromLibrary: true,
+          visionScore: 100,
+          visionMatches: true,
         });
       });
     } catch (error) {
@@ -146,20 +146,65 @@ export const searchProductImages = createServerFn({ method: "POST" })
       data.name,
     ].filter((q, i, arr) => q && arr.indexOf(q) === i);
 
+    let publicCandidates: ImageCandidate[] = [];
     for (const query of queries) {
       try {
         const found = await searchOpenFoodFacts(query, wanted);
-        found.forEach((c) => {
-          if (!candidates.some((existing) => existing.url === c.url)) candidates.push(c);
-        });
+        publicCandidates.push(...found);
       } catch (error) {
         console.error("openfoodfacts failed", error);
       }
-      if (candidates.filter((c) => c.score >= 8).length >= 4) break;
+      if (publicCandidates.length >= 8) break;
     }
 
-    candidates.sort((a, b) => b.score - a.score);
-    return { candidates: candidates.slice(0, 8) };
+    const seen = new Set<string>();
+    const uniquePublic: ImageCandidate[] = [];
+    for (const c of publicCandidates) {
+      if (!seen.has(c.url)) {
+        seen.add(c.url);
+        uniquePublic.push(c);
+      }
+    }
+
+    // 3. Validação visual com GPT-4o Vision para candidatos públicos
+    const toValidate = uniquePublic.slice(0, 4);
+    if (toValidate.length > 0 && wanted.name) {
+      const validationResults = await Promise.allSettled(
+        toValidate.map(async (candidate) => {
+          try {
+            const result = await validateProductImage({
+              imageUrl: candidate.url,
+              expectedName: wanted.name,
+              expectedBrand: wanted.brand,
+              expectedSize: wanted.size,
+            });
+            return { candidate, result };
+          } catch (error) {
+            console.error("vision validation failed for", candidate.url, error);
+            return { candidate, result: { score: 0, matches: false, detectedName: "", detectedBrand: "", detectedSize: "", reasoning: "Erro na validação visual" } as { score: number; matches: boolean; detectedName: string; detectedBrand: string; detectedSize: string; reasoning: string } };
+          }
+        }),
+      );
+
+      for (const result of validationResults) {
+        if (result.status === "fulfilled") {
+          const { candidate, result: vision } = result.value;
+          candidate.visionScore = vision.score;
+          candidate.visionMatches = vision.matches;
+          candidate.visionReasoning = vision.reasoning;
+          candidate.title = [candidate.title, `Match: ${vision.score}%`].join(" | ");
+          if (vision.matches) {
+            candidate.score = (candidate.score || 0) + vision.score + 50;
+          } else {
+            candidate.score = (candidate.score || 0) + vision.score * 0.2;
+          }
+        }
+      }
+    }
+
+    const scored = [...candidates, ...uniquePublic];
+    scored.sort((a, b) => (b.score || 0) - (a.score || 0));
+    return { candidates: scored.slice(0, 8) };
   });
 
 /** Baixa a imagem escolhida e devolve em base64 para que a exportação saia sem falhas. */

@@ -7,6 +7,7 @@ type AiProviderConfig = {
   apiKey: string;
   model: string;
   imageModel: string;
+  visionModel: string;
 };
 
 function getAiConfig(): AiProviderConfig {
@@ -19,6 +20,7 @@ function getAiConfig(): AiProviderConfig {
       apiKey: openAiKey,
       model: process.env["OPENAI_MODEL"]?.trim() || "gpt-4o-mini",
       imageModel: process.env["OPENAI_IMAGE_MODEL"]?.trim() || "dall-e-3",
+      visionModel: process.env["OPENAI_VISION_MODEL"]?.trim() || "gpt-4o",
     };
   }
 
@@ -28,6 +30,7 @@ function getAiConfig(): AiProviderConfig {
       apiKey: lovableKey,
       model: "google/gemini-3.7-flash",
       imageModel: "google/gemini-3.1-flash-image",
+      visionModel: "google/gemini-3.7-flash",
     };
   }
 
@@ -373,17 +376,43 @@ export const organizeFlyer = createServerFn({ method: "POST" })
       messages: [
         {
           role: "system",
-          content: `Você é diretor de arte de encartes de supermercado. Receba produtos com id, nome, marca, peso e preço.
-Organize para equilíbrio visual: agrupe por categoria, alterne nomes longos e curtos, e destaque de 1 a 2 produtos com melhor apelo de preço.
-Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"chamada curta em maiúsculas","subheadline":"texto curto"}`,
+          content: `Você é um diretor de arte sênior especializado em encartes de supermercado.
+Seu trabalho é criar uma composição profissional que pareça feita por uma agência de publicidade.
+
+Produtos recebidos: JSON com id, nome, marca, peso, preço, oldPrice, category, qty, highlight.
+
+DIRETRIZES VISUAIS:
+1. PRODUTOS COM MELHOR PREÇO recebem destaque máximo: imagem maior, preço gigante em etiqueta promocional.
+2. Preços devem ser o elemento mais chamativo do encarte, depois as imagens dos produtos.
+3. Agrupe produtos por categoria (hortifruti, mercearia, limpeza, etc) para facilitar leitura.
+4. Alimente nomes longos com nomes curtos para equilíbrio visual.
+5. Se houver 1 produto principal, use layout "destaque + grade". Se houver muitos, use grade equilibrada.
+6. Nunca deixe o encarte parecer uma tabela ou catálogo básico. Deve ter impacto comercial.
+
+Responda APENAS JSON:
+{
+  "order": ["id", "id", ...],
+  "highlight": ["id", ...],
+  "headline": "chamada principal em maiúsculas",
+  "subheadline": "texto secundário",
+  "layout": "grade" | "destaque" | "misto"
+}`,
         },
-        {
-          role: "user",
-          content: JSON.stringify({ products: data.products, perPage: data.perPage }),
-        },
+        { role: "user", content: JSON.stringify({ products: data.products, perPage: data.perPage }) },
       ],
       jsonMode: true,
     });
+
+    const parsed = extractJson(raw);
+    await logUsage(context.userId, "organizacao", {});
+    return {
+      order: Array.isArray(parsed?.order) ? parsed.order.map(String) : [],
+      highlight: Array.isArray(parsed?.highlight) ? parsed.highlight.map(String) : [],
+      headline: typeof parsed?.headline === "string" ? parsed.headline : "",
+      subheadline: typeof parsed?.subheadline === "string" ? parsed.subheadline : "",
+      layout: typeof parsed?.layout === "string" ? parsed.layout : "grade",
+    };
+  });
 
     const parsed = extractJson(raw);
     await logUsage(context.userId, "organizacao", {});
@@ -424,3 +453,106 @@ Fundo branco puro, iluminação de estúdio, produto centralizado e completo, al
     await logUsage(context.userId, "imagem", { product: data.name });
     return { dataUrl };
   });
+
+/** Validação visual de imagem de produto usando GPT-4o Vision */
+async function validateProductImage(params: {
+  imageUrl: string;
+  expectedName: string;
+  expectedBrand: string;
+  expectedSize: string;
+}): Promise<{ score: number; matches: boolean; detectedName: string; detectedBrand: string; detectedSize: string; reasoning: string }> {
+  const config = getAiConfig();
+  const baseUrl =
+    config.provider === "openai"
+      ? "https://api.openai.com/v1"
+      : "https://ai.gateway.lovable.dev/v1";
+
+  const prompt = `Você é um verificador rigoroso de imagens de produtos de supermercado.
+Analise a imagem enviada e determine se ela corresponde EXATAMENTE ao produto esperado.
+
+Produto esperado:
+- Nome: ${params.expectedName}
+- Marca: ${params.expectedBrand || "(não informada)"}
+- Tamanho/Peso: ${params.expectedSize || "(não informado)"}
+
+Regras de validação:
+1. A marca visível na embalagem deve ser EXATAMENTE a marca esperada. Se a marca esperada for "Pinduca" e a imagem mostrar "Camil", é INCORRETA.
+2. O tipo de produto deve corresponder. Se esperado "Feijão Preto" e a imagem mostrar "Feijão Carioca", é INCORRETA.
+3. O peso/volume deve corresponder quando visível. Se esperado "5kg" e a imagem mostrar "1kg", é INCORRETA.
+4. A imagem deve mostrar a embalagem ORIGINAL do produto, não uma réplica, não uma ilustração, não um desenho.
+5. Se houver qualquer dúvida, marque como INCORRETA.
+
+Responda APENAS com JSON:
+{
+  "score": 0-100,
+  "matches": true/false,
+  "detectedName": "nome do produto detectado na imagem",
+  "detectedBrand": "marca detectada na imagem",
+  "detectedSize": "tamanho detectado na imagem",
+  "reasoning": "explicação curta da decisão"
+}
+
+Seja rigoroso: só marque matches=true se tiver certeza absoluta que é o produto correto.`;
+
+  const body: Record<string, unknown> = {
+    model: config.visionModel,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          {
+            type: "image_url",
+            image_url: params.imageUrl.startsWith("data:") ? { url: params.imageUrl } : { url: params.imageUrl },
+          },
+        ],
+      },
+    ],
+    max_tokens: 300,
+  };
+
+  if (config.provider === "openai") {
+    body["response_format"] = { type: "json_object" };
+  }
+
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    let message = text;
+    try {
+      const parsed = JSON.parse(text);
+      message = parsed?.error?.message || text;
+    } catch {
+      /* raw text */
+    }
+    console.error(`Vision validation failed (${res.status}): ${message}`);
+    return { score: 0, matches: false, detectedName: "", detectedBrand: "", detectedSize: "", reasoning: `Erro na validação: ${res.status}` };
+  }
+
+  const json = await res.json();
+  const raw = json?.choices?.[0]?.message?.content ?? "";
+  const cleaned = raw.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  try {
+    const parsed = JSON.parse(cleaned);
+    return {
+      score: Number(parsed?.score ?? 0),
+      matches: parsed?.matches === true,
+      detectedName: String(parsed?.detectedName ?? ""),
+      detectedBrand: String(parsed?.detectedBrand ?? ""),
+      detectedSize: String(parsed?.detectedSize ?? ""),
+      reasoning: String(parsed?.reasoning ?? ""),
+    };
+  } catch {
+    return { score: 0, matches: false, detectedName: "", detectedBrand: "", detectedSize: "", reasoning: "Não foi possível interpretar a validação." };
+  }
+}
+
+export { validateProductImage };
