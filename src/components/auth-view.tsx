@@ -93,7 +93,9 @@ export function AuthView() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d91a1a] via-[#b91c1c] to-[#991b1b] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-500/25">
             <ShoppingBag className="w-7 h-7 text-white" />
           </div>
-          <CardTitle className="text-2xl font-black tracking-tight text-slate-900">Market Flyers</CardTitle>
+          <CardTitle className="text-2xl font-black tracking-tight text-slate-900">
+            Market Flyers
+          </CardTitle>
           <CardDescription className="text-slate-500 text-sm">
             Acesse sua conta para criar e editar encartes de ofertas
           </CardDescription>
@@ -135,7 +137,9 @@ export function AuthView() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div className="space-y-1.5">
-                <Label htmlFor="auth-name" className="text-xs font-semibold text-slate-700">Seu nome</Label>
+                <Label htmlFor="auth-name" className="text-xs font-semibold text-slate-700">
+                  Seu nome
+                </Label>
                 <Input
                   id="auth-name"
                   placeholder="Maria da Silva"
@@ -148,7 +152,9 @@ export function AuthView() {
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="auth-email" className="text-xs font-semibold text-slate-700">E-mail</Label>
+              <Label htmlFor="auth-email" className="text-xs font-semibold text-slate-700">
+                E-mail
+              </Label>
               <Input
                 id="auth-email"
                 type="email"
@@ -162,7 +168,9 @@ export function AuthView() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="auth-password" className="text-xs font-semibold text-slate-700">Senha</Label>
+              <Label htmlFor="auth-password" className="text-xs font-semibold text-slate-700">
+                Senha
+              </Label>
               <Input
                 id="auth-password"
                 type="password"

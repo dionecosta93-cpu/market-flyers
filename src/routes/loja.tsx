@@ -100,7 +100,10 @@ function StorePage() {
     setMessage(
       error
         ? { type: "err", text: "Não foi possível salvar. Tente novamente." }
-        : { type: "ok", text: "Dados salvos. Eles vão aparecer automaticamente nos próximos encartes." },
+        : {
+            type: "ok",
+            text: "Dados salvos. Eles vão aparecer automaticamente nos próximos encartes.",
+          },
     );
   }
 
@@ -150,13 +153,23 @@ function StorePage() {
                 <div className="flex items-center gap-4">
                   <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border bg-muted/40 flex items-center justify-center overflow-hidden shrink-0">
                     {profile.logo_url ? (
-                      <img src={profile.logo_url} alt="Logo do mercado" className="w-full h-full object-contain" />
+                      <img
+                        src={profile.logo_url}
+                        alt="Logo do mercado"
+                        className="w-full h-full object-contain"
+                      />
                     ) : (
                       <ImagePlus className="w-7 h-7 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => fileRef.current?.click()}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={() => fileRef.current?.click()}
+                    >
                       <ImagePlus className="w-4 h-4" />
                       {profile.logo_url ? "Trocar logo" : "Enviar logo"}
                     </Button>
@@ -256,7 +269,11 @@ function StorePage() {
               )}
 
               <Button className="w-full gap-2 h-11" onClick={handleSave} disabled={saving}>
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
                 Salvar dados do mercado
               </Button>
             </CardContent>

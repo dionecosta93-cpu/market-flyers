@@ -66,11 +66,18 @@ function FlyerThumb({ flyer }: { flyer: FlyerRow }) {
                 color: tpl.cardText,
               }}
             >
-              <p className="text-[11px] leading-tight font-medium truncate" style={{ fontWeight: 700 }}>
+              <p
+                className="text-[11px] leading-tight font-medium truncate"
+                style={{ fontWeight: 700 }}
+              >
                 {offer.name}
               </p>
-              {offer.brand && <p className="text-[8px] leading-tight opacity-70 truncate">{offer.brand}</p>}
-              {offer.size && <p className="text-[8px] leading-tight opacity-60 truncate">{offer.size}</p>}
+              {offer.brand && (
+                <p className="text-[8px] leading-tight opacity-70 truncate">{offer.brand}</p>
+              )}
+              {offer.size && (
+                <p className="text-[8px] leading-tight opacity-60 truncate">{offer.size}</p>
+              )}
               <div className="mt-auto pt-1">
                 <span
                   className="inline-block rounded px-1.5 py-0.5 text-[10px] font-extrabold"
@@ -156,7 +163,9 @@ function FlyersPage() {
   }
 
   const filtered = flyers.filter((f) =>
-    String(f.title || "").toLowerCase().includes(search.trim().toLowerCase()),
+    String(f.title || "")
+      .toLowerCase()
+      .includes(search.trim().toLowerCase()),
   );
 
   return (
@@ -342,9 +351,13 @@ function FlyersPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!window.confirm(`Excluir "${flyer.title}"?`)) return;
-                          supabase.from("flyers").delete().eq("id", flyer.id).then(() => {
-                            queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
-                          });
+                          supabase
+                            .from("flyers")
+                            .delete()
+                            .eq("id", flyer.id)
+                            .then(() => {
+                              queryClient.invalidateQueries({ queryKey: ["flyers", userId] });
+                            });
                         }}
                       >
                         <Trash2 className="w-3 h-3" />
@@ -365,7 +378,8 @@ function FlyersPage() {
                 Limpar todos os encartes
               </DialogTitle>
               <DialogDescription>
-                Tem certeza? Todos os {flyers.length} encarte{flyers.length > 1 ? "s" : ""} serão excluídos. Esta ação não pode ser desfeita.
+                Tem certeza? Todos os {flyers.length} encarte{flyers.length > 1 ? "s" : ""} serão
+                excluídos. Esta ação não pode ser desfeita.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="gap-2">

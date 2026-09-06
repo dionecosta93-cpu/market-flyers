@@ -4,7 +4,7 @@ name: Mapa do Projeto
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths-ignore:
       - "graphify-out/**"
   workflow_dispatch:

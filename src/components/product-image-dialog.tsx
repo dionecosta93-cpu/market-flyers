@@ -51,14 +51,19 @@ export function ProductImageDialog({
     setSearching(true);
     setMessage(null);
     try {
-      const result = await searchProductImages({ data: {
-        name: offer.name,
-        brand: offer.brand || undefined,
-        size: offer.size || undefined,
-      } });
+      const result = await searchProductImages({
+        data: {
+          name: offer.name,
+          brand: offer.brand || undefined,
+          size: offer.size || undefined,
+        },
+      });
       setCandidates(result.candidates);
       if (result.candidates.length === 0) {
-        setMessage({ type: "err", text: "Não encontramos uma imagem adequada. Envie a sua ou gere com a IA." });
+        setMessage({
+          type: "err",
+          text: "Não encontramos uma imagem adequada. Envie a sua ou gere com a IA.",
+        });
       }
     } catch (error) {
       setMessage({
@@ -135,18 +140,23 @@ export function ProductImageDialog({
     setBusy(true);
     setMessage(null);
     try {
-      const result = await generateProductImage({ data: {
-        name: offer!.name || "Produto",
-        brand: offer!.brand || undefined,
-        size: offer!.size || undefined,
-        category: offer!.category || undefined,
-      } });
+      const result = await generateProductImage({
+        data: {
+          name: offer!.name || "Produto",
+          brand: offer!.brand || undefined,
+          size: offer!.size || undefined,
+          category: offer!.category || undefined,
+        },
+      });
       onGenerated(result.dataUrl, "Imagem gerada por IA");
       setMessage({ type: "ok", text: "Imagem gerada com sucesso." });
     } catch (error) {
       setMessage({
         type: "err",
-        text: error instanceof Error ? error.message : "Não foi possível gerar a imagem. Tente novamente.",
+        text:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível gerar a imagem. Tente novamente.",
       });
     } finally {
       setBusy(false);
@@ -176,12 +186,18 @@ export function ProductImageDialog({
 
           {currentImage ? (
             <div className="rounded-lg border border-border bg-muted p-3 flex items-center justify-center">
-              <img src={currentImage} alt={offer.name} className="max-h-40 max-w-full object-contain" />
+              <img
+                src={currentImage}
+                alt={offer.name}
+                className="max-h-40 max-w-full object-contain"
+              />
             </div>
           ) : (
             <div className="rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center">
               <ImagePlus className="mx-auto h-7 w-7 text-muted-foreground/60" />
-              <p className="mt-2 text-sm text-muted-foreground">Nenhuma imagem neste produto ainda.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Nenhuma imagem neste produto ainda.
+              </p>
             </div>
           )}
 
@@ -232,7 +248,13 @@ export function ProductImageDialog({
                       Não encontramos uma imagem adequada para este produto.
                     </p>
                   )}
-                  <Button variant="outline" size="sm" className="gap-1.5" onClick={runSearch} disabled={busy}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={runSearch}
+                    disabled={busy}
+                  >
                     <Search className="h-3.5 w-3.5" /> Pesquisar novamente
                   </Button>
                 </>
@@ -273,10 +295,15 @@ export function ProductImageDialog({
 
             <TabsContent value="gerar" className="mt-3 space-y-3">
               <p className="text-sm text-muted-foreground">
-                Cria uma imagem promocional com fundo branco em alta definição para o encarte usando o modelo <strong>DALL-E da OpenAI</strong>.
+                Cria uma imagem promocional com fundo branco em alta definição para o encarte usando
+                o modelo <strong>DALL-E da OpenAI</strong>.
               </p>
               <Button onClick={handleGenerate} disabled={busy} className="w-full gap-2">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {busy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
                 {busy ? "Gerando com DALL-E..." : "Gerar foto com DALL-E (OpenAI)"}
               </Button>
             </TabsContent>

@@ -92,7 +92,10 @@ function PageCanvas({
           {settings.headline || "ENCARTE DE OFERTAS"}
         </h1>
         {settings.subheadline && (
-          <p className="text-[13px] opacity-90 mt-1" style={{ fontSize: `${Math.round(13 * scale)}px` }}>
+          <p
+            className="text-[13px] opacity-90 mt-1"
+            style={{ fontSize: `${Math.round(13 * scale)}px` }}
+          >
             {settings.subheadline}
           </p>
         )}
@@ -131,7 +134,9 @@ function PageCanvas({
                     {offer.name}
                   </p>
                   {offer.brand && (
-                    <p className="text-[10px] leading-tight opacity-70 truncate mt-0.5">{offer.brand}</p>
+                    <p className="text-[10px] leading-tight opacity-70 truncate mt-0.5">
+                      {offer.brand}
+                    </p>
                   )}
                   {offer.size && (
                     <p className="text-[10px] leading-tight opacity-60 truncate">{offer.size}</p>
@@ -139,7 +144,10 @@ function PageCanvas({
                 </div>
                 <div className="mt-auto pt-2">
                   {offer.oldPrice ? (
-                    <p className="text-[10px] opacity-60 line-through" style={{ fontSize: `${Math.round(10 * scale)}px` }}>
+                    <p
+                      className="text-[10px] opacity-60 line-through"
+                      style={{ fontSize: `${Math.round(10 * scale)}px` }}
+                    >
                       {brl(offer.oldPrice)}
                     </p>
                   ) : null}
@@ -299,7 +307,9 @@ function FlyerEditorPage() {
 
   function setActivePageItems(updater: (items: Offer[]) => Offer[]) {
     setPages((prev) =>
-      prev.map((page, i) => (i === safeIndex ? { ...page, items: updater(page.items || []) } : page)),
+      prev.map((page, i) =>
+        i === safeIndex ? { ...page, items: updater(page.items || []) } : page,
+      ),
     );
   }
 
@@ -315,9 +325,7 @@ function FlyerEditorPage() {
   }
 
   function updateOffer(offerId: string, updates: Partial<Offer>) {
-    setActivePageItems((items) =>
-      items.map((o) => (o.id === offerId ? { ...o, ...updates } : o)),
-    );
+    setActivePageItems((items) => items.map((o) => (o.id === offerId ? { ...o, ...updates } : o)));
   }
 
   function deleteOffer(offerId: string) {
@@ -347,9 +355,7 @@ function FlyerEditorPage() {
   }
 
   function handleReplacePage(items: Offer[]) {
-    setPages((prev) =>
-      prev.map((page, i) => (i === safeIndex ? { ...page, items } : page)),
-    );
+    setPages((prev) => prev.map((page, i) => (i === safeIndex ? { ...page, items } : page)));
   }
 
   function handleImageGenerated(image: string | null) {
@@ -366,17 +372,19 @@ function FlyerEditorPage() {
     setAiBusy(true);
     setSaveState("saving");
     try {
-      const result = await organizeFlyer({ data: {
-        products: flat.map((o) => ({
-          id: o.id,
-          name: o.name,
-          brand: o.brand || "",
-          size: o.size || "",
-          price: Number(o.price) || 0,
-          oldPrice: o.oldPrice ?? null,
-        })),
-        perPage,
-      } });
+      const result = await organizeFlyer({
+        data: {
+          products: flat.map((o) => ({
+            id: o.id,
+            name: o.name,
+            brand: o.brand || "",
+            size: o.size || "",
+            price: Number(o.price) || 0,
+            oldPrice: o.oldPrice ?? null,
+          })),
+          perPage,
+        },
+      });
 
       const byId = new Map(flat.map((o) => [o.id, o]));
       const ordered: Offer[] = [];
@@ -549,7 +557,11 @@ function FlyerEditorPage() {
                     disabled={aiBusy || offers.length === 0}
                     title="Organizar produtos, categorias e destaques com OpenAI"
                   >
-                    {aiBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-emerald-600" />}
+                    {aiBusy ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                    )}
                     Organizar
                   </Button>
                   <Button
@@ -559,7 +571,11 @@ function FlyerEditorPage() {
                     onClick={() => setImportOpen(true)}
                     disabled={aiBusy}
                   >
-                    {aiBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    {aiBusy ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3 h-3" />
+                    )}
                     Importar IA
                   </Button>
                   <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={addOffer}>
@@ -571,7 +587,13 @@ function FlyerEditorPage() {
 
               {pages.length > 1 && (
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={prevPage} disabled={safeIndex === 0}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={prevPage}
+                    disabled={safeIndex === 0}
+                  >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <span className="text-xs text-muted-foreground px-2">
@@ -609,8 +631,12 @@ function FlyerEditorPage() {
                             <Star className="w-3 h-3 text-yellow-500 fill-yellow-500 shrink-0" />
                           )}
                         </div>
-                        {offer.brand && <p className="text-xs text-muted-foreground truncate">{offer.brand}</p>}
-                        <p className="text-sm font-semibold text-primary mt-0.5">{brl(offer.price || 0)}</p>
+                        {offer.brand && (
+                          <p className="text-xs text-muted-foreground truncate">{offer.brand}</p>
+                        )}
+                        <p className="text-sm font-semibold text-primary mt-0.5">
+                          {brl(offer.price || 0)}
+                        </p>
                       </div>
                       <Button
                         variant="ghost"
@@ -733,7 +759,9 @@ function FlyerEditorPage() {
                       <Label className="text-xs">Destacar no encarte</Label>
                       <Switch
                         checked={!!selectedOffer.highlight}
-                        onCheckedChange={(checked) => updateOffer(selectedOffer.id, { highlight: checked })}
+                        onCheckedChange={(checked) =>
+                          updateOffer(selectedOffer.id, { highlight: checked })
+                        }
                       />
                     </div>
                   </div>
@@ -906,7 +934,9 @@ function FlyerEditorPage() {
                     <Label className="text-xs">Mostrar Rodapé</Label>
                     <Switch
                       checked={settings.showFooter ?? true}
-                      onCheckedChange={(checked) => setSettings({ ...settings, showFooter: checked })}
+                      onCheckedChange={(checked) =>
+                        setSettings({ ...settings, showFooter: checked })
+                      }
                     />
                   </div>
                 </div>
@@ -940,7 +970,15 @@ function FlyerEditorPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2" onClick={() => { prevPage(); }} disabled={safeIndex === 0}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => {
+                prevPage();
+              }}
+              disabled={safeIndex === 0}
+            >
               <ChevronLeft className="w-4 h-4" />
               Anterior
             </Button>
@@ -948,7 +986,9 @@ function FlyerEditorPage() {
               variant="outline"
               size="sm"
               className="gap-2"
-              onClick={() => { nextPage(); }}
+              onClick={() => {
+                nextPage();
+              }}
               disabled={safeIndex === pages.length - 1}
             >
               Próxima

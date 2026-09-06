@@ -740,22 +740,10 @@
       "src_integrations_supabase_cron_auth",
       "src_integrations_supabase_cron_auth_authenticatecronrequest"
     ],
-    "31": [
-      "package_overrides",
-      "package_overrides_rolldown"
-    ],
-    "32": [
-      "ref_lovable_dev_vite_tanstack_config",
-      "vite_config"
-    ],
-    "33": [
-      "ref_radix_ui_react_aspect_ratio",
-      "src_components_ui_aspect_ratio"
-    ],
-    "34": [
-      "ref_radix_ui_react_collapsible",
-      "src_components_ui_collapsible"
-    ]
+    "31": ["package_overrides", "package_overrides_rolldown"],
+    "32": ["ref_lovable_dev_vite_tanstack_config", "vite_config"],
+    "33": ["ref_radix_ui_react_aspect_ratio", "src_components_ui_aspect_ratio"],
+    "34": ["ref_radix_ui_react_collapsible", "src_components_ui_collapsible"]
   },
   "cohesion": {
     "0": 0.06596035543403965,
@@ -850,10 +838,7 @@
     {
       "source": "AlertDialogOverlay",
       "target": "cn()",
-      "source_files": [
-        "src/components/ui/alert-dialog.tsx",
-        "src/lib/utils.ts"
-      ],
+      "source_files": ["src/components/ui/alert-dialog.tsx", "src/lib/utils.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities; peripheral node `AlertDialogOverlay` unexpectedly reaches hub `cn()`"
@@ -861,10 +846,7 @@
     {
       "source": "AlertDialogContent",
       "target": "cn()",
-      "source_files": [
-        "src/components/ui/alert-dialog.tsx",
-        "src/lib/utils.ts"
-      ],
+      "source_files": ["src/components/ui/alert-dialog.tsx", "src/lib/utils.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities; peripheral node `AlertDialogContent` unexpectedly reaches hub `cn()`"
@@ -872,10 +854,7 @@
     {
       "source": "AlertDialogHeader()",
       "target": "cn()",
-      "source_files": [
-        "src/components/ui/alert-dialog.tsx",
-        "src/lib/utils.ts"
-      ],
+      "source_files": ["src/components/ui/alert-dialog.tsx", "src/lib/utils.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities; peripheral node `AlertDialogHeader()` unexpectedly reaches hub `cn()`"
@@ -883,10 +862,7 @@
     {
       "source": "AlertDialogFooter()",
       "target": "cn()",
-      "source_files": [
-        "src/components/ui/alert-dialog.tsx",
-        "src/lib/utils.ts"
-      ],
+      "source_files": ["src/components/ui/alert-dialog.tsx", "src/lib/utils.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities; peripheral node `AlertDialogFooter()` unexpectedly reaches hub `cn()`"
@@ -894,10 +870,7 @@
     {
       "source": "AlertDialogTitle",
       "target": "cn()",
-      "source_files": [
-        "src/components/ui/alert-dialog.tsx",
-        "src/lib/utils.ts"
-      ],
+      "source_files": ["src/components/ui/alert-dialog.tsx", "src/lib/utils.ts"],
       "confidence": "EXTRACTED",
       "relation": "calls",
       "why": "bridges separate communities; peripheral node `AlertDialogTitle` unexpectedly reaches hub `cn()`"

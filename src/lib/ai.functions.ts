@@ -36,10 +36,12 @@ function getAiConfig(): AiProviderConfig {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function firstText(json: any): string {
   return json?.choices?.[0]?.message?.content ?? "";
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extractJson(raw: string): any {
   const cleaned = raw
     .replace(/^```(?:json)?/i, "")
@@ -66,14 +68,18 @@ async function logUsage(userId: string, kind: string, meta: Record<string, unkno
 
 /** Executa chamada de Chat Completion (OpenAI ou gateway compatível) */
 async function callChat(params: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: Array<{ role: string; content: any }>;
   jsonMode?: boolean;
 }): Promise<string> {
   const config = getAiConfig();
 
   const baseUrl =
-    config.provider === "openai" ? "https://api.openai.com/v1" : "https://ai.gateway.lovable.dev/v1";
+    config.provider === "openai"
+      ? "https://api.openai.com/v1"
+      : "https://ai.gateway.lovable.dev/v1";
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: Record<string, any> = {
     model: config.model,
     messages: params.messages,
@@ -152,7 +158,9 @@ async function callAudioTranscription(audioBase64: string, format: string): Prom
       try {
         const parsed = JSON.parse(text);
         message = parsed?.error?.message || text;
-      } catch {}
+      } catch {
+        /* raw text */
+      }
       throw new Error(`Erro no Whisper da OpenAI (${res.status}): ${message}`);
     }
 
@@ -221,7 +229,9 @@ async function callImageGeneration(prompt: string): Promise<string> {
       try {
         const parsed = JSON.parse(text);
         message = parsed?.error?.message || text;
-      } catch {}
+      } catch {
+        /* raw text */
+      }
       throw new Error(`Erro no DALL-E da OpenAI (${res.status}): ${message}`);
     }
 
@@ -294,7 +304,9 @@ Responda APENAS com JSON: {"products":[...]}. Se nada for identificável, {"prod
 /** Interpretação de texto e extração de ofertas via GPT-4o-mini */
 export const parseOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { text: string }) => z.object({ text: z.string().min(2).max(8000) }).parse(input))
+  .inputValidator((input: { text: string }) =>
+    z.object({ text: z.string().min(2).max(8000) }).parse(input),
+  )
   .handler(async ({ data, context }) => {
     const raw = await callChat({
       messages: [
@@ -309,7 +321,7 @@ export const parseOffers = createServerFn({ method: "POST" })
     await logUsage(context.userId, "interpretacao", { count: products.length });
 
     return {
-      products: products.map((p: any) => ({
+      products: products.map((p: Record<string, unknown>) => ({
         name: String(p?.name ?? "").trim() || "Produto",
         brand: String(p?.brand ?? "").trim(),
         size: String(p?.size ?? "").trim(),
@@ -365,7 +377,10 @@ export const organizeFlyer = createServerFn({ method: "POST" })
 Organize para equilíbrio visual: agrupe por categoria, alterne nomes longos e curtos, e destaque de 1 a 2 produtos com melhor apelo de preço.
 Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"chamada curta em maiúsculas","subheadline":"texto curto"}`,
         },
-        { role: "user", content: JSON.stringify({ products: data.products, perPage: data.perPage }) },
+        {
+          role: "user",
+          content: JSON.stringify({ products: data.products, perPage: data.perPage }),
+        },
       ],
       jsonMode: true,
     });
@@ -383,15 +398,21 @@ Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"cha
 /** Geração de imagem de produto para encartes com DALL-E 3 */
 export const generateProductImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; brand?: string | undefined; size?: string | undefined; category?: string | undefined }) =>
-    z
-      .object({
-        name: z.string().min(1).max(120),
-        brand: z.string().max(80).optional(),
-        size: z.string().max(40).optional(),
-        category: z.string().max(60).optional(),
-      })
-      .parse(input),
+  .inputValidator(
+    (input: {
+      name: string;
+      brand?: string | undefined;
+      size?: string | undefined;
+      category?: string | undefined;
+    }) =>
+      z
+        .object({
+          name: z.string().min(1).max(120),
+          brand: z.string().max(80).optional(),
+          size: z.string().max(40).optional(),
+          category: z.string().max(60).optional(),
+        })
+        .parse(input),
   )
   .handler(async ({ data, context }) => {
     const descriptor = [data.name, data.size, data.category].filter(Boolean).join(", ");
