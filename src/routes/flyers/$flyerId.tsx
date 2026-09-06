@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
@@ -64,14 +65,18 @@ function PageCanvas({
   page,
   settings,
   templateId,
+  layoutMode = "grade",
 }: {
   page: FlyerPage;
   settings: FlyerSettings;
   templateId: string;
+  layoutMode?: "grade" | "destaque" | "misto";
 }) {
   const tpl = templateById(templateId || "tradicional");
   const scale = settings.fontScale || 1;
   const items = page?.items || [];
+  const highlighted = items.filter((i) => i.highlight);
+  const normal = items.filter((i) => !i.highlight);
 
   return (
     <div
@@ -92,10 +97,7 @@ function PageCanvas({
           {settings.headline || "ENCARTE DE OFERTAS"}
         </h1>
         {settings.subheadline && (
-          <p
-            className="text-[13px] opacity-90 mt-1"
-            style={{ fontSize: `${Math.round(13 * scale)}px` }}
-          >
+          <p className="text-[13px] opacity-90 mt-1" style={{ fontSize: `${Math.round(13 * scale)}px` }}>
             {settings.subheadline}
           </p>
         )}
@@ -108,61 +110,34 @@ function PageCanvas({
               Adicione ofertas para começar
             </p>
           </div>
+        ) : layoutMode === "destaque" && highlighted.length > 0 && normal.length > 0 ? (
+          <div className="h-full flex flex-col gap-3 content-start overflow-y-auto">
+            <div
+              className="rounded-2xl p-4 flex flex-col"
+              style={{
+                backgroundColor: tpl.card,
+                borderColor: tpl.cardBorder,
+                color: tpl.cardText,
+                borderRadius: tpl.radius,
+                boxShadow: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
+                borderWidth: "1px",
+                borderStyle: "solid",
+              }}
+            >
+              {highlighted.map((offer) => (
+                <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} prominent />
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-3 content-start">
+              {normal.map((offer) => (
+                <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} />
+              ))}
+            </div>
+          </div>
         ) : (
           <div className="h-full grid grid-cols-2 gap-3 content-start">
             {items.map((offer) => (
-              <div
-                key={offer.id}
-                className="rounded-xl border p-3 flex flex-col min-h-0"
-                style={{
-                  backgroundColor: tpl.card,
-                  borderColor: tpl.cardBorder,
-                  color: tpl.cardText,
-                  borderRadius: tpl.radius,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                }}
-              >
-                <div className="min-w-0">
-                  <p
-                    className="font-bold leading-tight line-clamp-2"
-                    style={{
-                      fontFamily: tpl.headingFont,
-                      textTransform: tpl.uppercaseNames ? "uppercase" : "none",
-                      fontSize: `${Math.round(12 * scale)}px`,
-                    }}
-                  >
-                    {offer.name}
-                  </p>
-                  {offer.brand && (
-                    <p className="text-[10px] leading-tight opacity-70 truncate mt-0.5">
-                      {offer.brand}
-                    </p>
-                  )}
-                  {offer.size && (
-                    <p className="text-[10px] leading-tight opacity-60 truncate">{offer.size}</p>
-                  )}
-                </div>
-                <div className="mt-auto pt-2">
-                  {offer.oldPrice ? (
-                    <p
-                      className="text-[10px] opacity-60 line-through"
-                      style={{ fontSize: `${Math.round(10 * scale)}px` }}
-                    >
-                      {brl(offer.oldPrice)}
-                    </p>
-                  ) : null}
-                  <span
-                    className="inline-block rounded-lg px-2.5 py-1 font-black"
-                    style={{
-                      backgroundColor: tpl.price,
-                      color: tpl.priceText,
-                      fontSize: `${Math.round(13 * scale)}px`,
-                    }}
-                  >
-                    {brl(offer.price || 0)}
-                  </span>
-                </div>
-              </div>
+              <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} prominent={!!offer.highlight} />
             ))}
           </div>
         )}
@@ -183,6 +158,91 @@ function PageCanvas({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ProductCard({
+  offer,
+  template,
+  scale,
+  prominent = false,
+}: {
+  offer: Offer;
+  template: FlyerTemplate;
+  scale: number;
+  prominent?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col min-h-0 ${prominent ? "md:col-span-2" : ""}`}
+      style={{
+        backgroundColor: template.card,
+        borderColor: template.cardBorder,
+        color: template.cardText,
+        borderRadius: template.radius,
+        boxShadow: prominent
+          ? "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.08)"
+          : "0 1px 3px rgba(0,0,0,0.08)",
+        borderWidth: "1px",
+        borderStyle: "solid",
+        padding: prominent ? "16px" : "12px",
+      }}
+    >
+      <div className="min-w-0 flex-1">
+        <p
+          className="font-bold leading-tight line-clamp-2"
+          style={{
+            fontFamily: template.headingFont,
+            textTransform: template.uppercaseNames ? "uppercase" : "none",
+            fontSize: `${Math.round((prominent ? 16 : 12) * scale)}px`,
+          }}
+        >
+          {offer.name}
+        </p>
+        {offer.brand && (
+          <p className="text-[10px] leading-tight opacity-70 truncate mt-0.5">{offer.brand}</p>
+        )}
+        {offer.size && (
+          <p className="text-[10px] leading-tight opacity-60 truncate">{offer.size}</p>
+        )}
+      </div>
+
+      {template.showImage && offer.imageUrl && (
+        <div
+          className="mt-2 flex items-center justify-center bg-white/60 rounded-lg overflow-hidden"
+          style={{ height: prominent ? "120px" : "80px" }}
+        >
+          <img
+            src={offer.imageUrl}
+            alt={offer.name}
+            className="max-h-full max-w-full object-contain p-1"
+            style={{ imageRendering: "auto" }}
+          />
+        </div>
+      )}
+
+      <div className="mt-auto pt-2">
+        {offer.oldPrice ? (
+          <p
+            className="text-[10px] opacity-60 line-through"
+            style={{ fontSize: `${Math.round(10 * scale)}px` }}
+          >
+            {brl(offer.oldPrice)}
+          </p>
+        ) : null}
+        <span
+          className="inline-block rounded-lg px-3 py-1.5 font-black"
+          style={{
+            backgroundColor: template.price,
+            color: template.priceText,
+            fontSize: `${Math.round((prominent ? 20 : 15) * scale)}px`,
+            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+          }}
+        >
+          {brl(offer.price || 0)}
+        </span>
+      </div>
     </div>
   );
 }
@@ -418,7 +478,59 @@ function FlyerEditorPage() {
     }
   }
 
-  async function handleExport() {
+  async function handleFixWithAI() {
+    const flat = pages.flatMap((p) => p.items || []);
+    if (flat.length === 0) return;
+    setAiBusy(true);
+    setSaveState("saving");
+    try {
+      const result = await organizeFlyer({
+        data: {
+          products: flat.map((o) => ({
+            id: o.id,
+            name: o.name,
+            brand: o.brand || "",
+            size: o.size || "",
+            price: Number(o.price) || 0,
+            oldPrice: o.oldPrice ?? null,
+          })),
+          perPage,
+        },
+      });
+
+      const byId = new Map(flat.map((o) => [o.id, o]));
+      const ordered: Offer[] = [];
+      result.order.forEach((id: string) => {
+        const item = byId.get(String(id));
+        if (item) {
+          ordered.push({ ...item, highlight: result.highlight.includes(String(id)) });
+          byId.delete(String(id));
+        }
+      });
+      byId.forEach((item) => ordered.push({ ...item, highlight: false }));
+
+      const chunks: FlyerPage[] = [];
+      for (let i = 0; i < ordered.length; i += perPage) {
+        chunks.push({ id: newId(), items: ordered.slice(i, i + perPage) });
+      }
+
+      setPages(chunks.length ? chunks : [{ id: newId(), items: [] }]);
+      setActiveIndex(0);
+      setSelectedOfferId(null);
+      setSettings((prev) => ({
+        ...prev,
+        headline: result.headline || prev.headline,
+        subheadline: result.subheadline || prev.subheadline,
+      }));
+    } catch (error) {
+      console.error(error);
+      setSaveState("error");
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
+  async function exportPng() {
     const node = previewRef.current;
     if (!node) return;
     setSaveState("saving");
@@ -431,11 +543,76 @@ function FlyerEditorPage() {
       link.download = `${(title || "encarte").replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase() || "encarte"}.png`;
       link.href = dataUrl;
       link.click();
-
       const error = await persistNow({ download_count: downloadCount + 1 });
       if (!error) setDownloadCount((c) => c + 1);
       setSaveState(error ? "error" : "saved");
       if (error) console.error(error);
+    } catch (error) {
+      console.error(error);
+      setSaveState("error");
+    }
+  }
+
+  async function exportJpg() {
+    const node = previewRef.current;
+    if (!node) return;
+    setSaveState("saving");
+    try {
+      const dataUrl = await toPng(node, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas indisponível");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const jpgUrl = canvas.toDataURL("image/jpeg", 0.92);
+      const link = document.createElement("a");
+      link.download = `${(title || "encarte").replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase() || "encarte"}.jpg`;
+      link.href = jpgUrl;
+      link.click();
+      setSaveState("saved");
+    } catch (error) {
+      console.error(error);
+      setSaveState("error");
+    }
+  }
+
+  async function exportPdf() {
+    const node = previewRef.current;
+    if (!node) return;
+    setSaveState("saving");
+    try {
+      const { jsPDF } = await import("jspdf");
+      const dataUrl = await toPng(node, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      const orientation = img.naturalWidth > img.naturalHeight ? "landscape" : "portrait";
+      const pdf = new jsPDF({
+        orientation,
+        unit: "px",
+        format: [img.naturalWidth, img.naturalHeight],
+      });
+      pdf.addImage(dataUrl, "PNG", 0, 0, img.naturalWidth, img.naturalHeight);
+      pdf.save(`${(title || "encarte").replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase() || "encarte"}.pdf`);
+      setSaveState("saved");
     } catch (error) {
       console.error(error);
       setSaveState("error");
@@ -648,6 +825,24 @@ function FlyerEditorPage() {
                         }}
                       >
                         <Trash2 className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const copy = { ...offer, id: newId() };
+                          setActivePageItems((items) => {
+                            const idx = items.findIndex((x) => x.id === offer.id);
+                            const next = [...items];
+                            next.splice(idx + 1, 0, copy as Offer);
+                            return next;
+                          });
+                          setSelectedOfferId(copy.id);
+                        }}
+                      >
+                        <Plus className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -994,10 +1189,30 @@ function FlyerEditorPage() {
               Próxima
               <ChevronRight className="w-4 h-4" />
             </Button>
-            <Button size="sm" className="gap-2" onClick={handleExport}>
-              <Download className="w-4 h-4" />
-              Exportar PNG
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleFixWithAI}
+              disabled={aiBusy || offers.length === 0}
+              title="Corrigir layout, alinhamento e hierarquia com IA"
+            >
+              {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              Corrigir com IA
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="gap-2">
+                  <Download className="w-4 h-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportPng}>Baixar PNG</DropdownMenuItem>
+                <DropdownMenuItem onClick={exportJpg}>Baixar JPG</DropdownMenuItem>
+                <DropdownMenuItem onClick={exportPdf}>Baixar PDF</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -1010,7 +1225,7 @@ function FlyerEditorPage() {
               height: Math.round(fmt.height * 0.4),
             }}
           >
-            <PageCanvas page={activePage} settings={settings} templateId={template} />
+            <PageCanvas page={activePage} settings={settings} templateId={template} layoutMode="grade" />
           </div>
         </div>
 

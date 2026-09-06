@@ -414,15 +414,6 @@ Responda APENAS JSON:
     };
   });
 
-    const parsed = extractJson(raw);
-    await logUsage(context.userId, "organizacao", {});
-    return {
-      order: Array.isArray(parsed?.order) ? parsed.order.map(String) : [],
-      highlight: Array.isArray(parsed?.highlight) ? parsed.highlight.map(String) : [],
-      headline: typeof parsed?.headline === "string" ? parsed.headline : "",
-      subheadline: typeof parsed?.subheadline === "string" ? parsed.subheadline : "",
-    };
-  });
 
 /** Geração de imagem de produto para encartes com DALL-E 3 */
 export const generateProductImage = createServerFn({ method: "POST" })

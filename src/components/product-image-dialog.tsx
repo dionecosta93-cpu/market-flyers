@@ -22,6 +22,39 @@ type ProductImageDialogProps = {
 
 type Message = { type: "ok" | "err"; text: string };
 
+async function removeBackground(dataUrl: string): Promise<string> {
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Não foi possível carregar a imagem."));
+    img.src = dataUrl;
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas indisponível.");
+
+  ctx.drawImage(image, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const brightness = (r + g + b) / 3;
+    if (brightness > 240 && Math.abs(r - g) < 20 && Math.abs(r - b) < 20) {
+      data[i + 3] = 0;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL("image/png");
+}
+
 export function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -310,17 +343,44 @@ export function ProductImageDialog({
           </Tabs>
 
           {currentImage && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                onGenerated(null, null);
-                setMessage(null);
-              }}
-              className="w-full gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Remover imagem
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  if (!currentImage || !offer) return;
+                  setBusy(true);
+                  setMessage(null);
+                  try {
+                    const dataUrl = await removeBackground(currentImage);
+                    onGenerated(dataUrl, "Fundo removido");
+                    setMessage({ type: "ok", text: "Fundo removido com sucesso." });
+                  } catch (error) {
+                    setMessage({
+                      type: "err",
+                      text: error instanceof Error ? error.message : "Não foi possível remover o fundo.",
+                    });
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+                disabled={busy}
+                className="w-full gap-2"
+              >
+                <Sparkles className="h-4 w-4" />
+                Remover fundo
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  onGenerated(null, null);
+                  setMessage(null);
+                }}
+                className="w-full gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Remover imagem
+              </Button>
+            </>
           )}
         </div>
       </DialogContent>
