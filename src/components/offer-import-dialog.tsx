@@ -1,1 +1,326 @@
-import { useEffect, useRef, useState } from 'react';\nimport { Loader2, Mic, Square, Wand2 } from 'lucide-react';\nimport { Button } from '@/components/ui/button';\nimport {\n  Dialog,\n  DialogContent,\n  DialogDescription,\n  DialogHeader,\n  DialogTitle,\n} from '@/components/ui/dialog';\nimport { Textarea } from '@/components/ui/textarea';\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';\nimport { correctOffers, parseOffers, transcribeOffers } from '@/lib/ai.functions';\nimport { newId, type Offer } from '@/lib/flyer-types';\n\ntype OfferImportDialogProps = {\n  open: boolean;\n  onOpenChange: (open: boolean) => void;\n  offers: Offer[];\n  onAddMany: (items: Offer[]) => void;\n  onReplaceAll: (items: Offer[]) => void;\n};\n\ntype Message = { type: 'ok' | 'err'; text: string };\n\nfunction blobToBase64(blob: Blob): Promise<string> {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.onload = () => {\n      const result = reader.result as string;\n      const base64 = result.includes(',') ? result.split(',')[1] : result;\n      resolve(base64 || '');\n    };\n    reader.onerror = () => reject(reader.error ?? new Error('Não foi possível ler o áudio.'));\n    reader.readAsDataURL(blob);\n  });\n}\n\nfunction toNewOffers(items: any[]): Offer[] {\n  return items.map((item) => ({\n    id: newId(),\n    name: String(item?.name ?? 'Produto').trim() || 'Produto',\n    brand: typeof item?.brand === 'string' ? item.brand.trim() : '',\n    size: typeof item?.size === 'string' ? item.size.trim() : '',\n    price: Number(item?.price) || 0,\n    oldPrice: item?.oldPrice == null ? null : Number(item.oldPrice),\n    category: typeof item?.category === 'string' ? item.category : 'Outros',\n    qty: typeof item?.qty === 'string' ? item.qty : '',\n  }));\n}\n\nfunction messageFor(error: unknown): Message {\n  return {\n    type: 'err',\n    text: error instanceof Error ? error.message : 'Não foi possível concluir. Tente novamente.',\n  };\n}\n\nexport function OfferImportDialog({\n  open,\n  onOpenChange,\n  offers,\n  onAddMany,\n  onReplaceAll,\n}: OfferImportDialogProps) {\n  const [activeTab, setActiveTab] = useState<'texto' | 'voz' | 'comando'>('texto');\n  const [draft, setDraft] = useState('');\n  const [busy, setBusy] = useState(false);\n  const [recording, setRecording] = useState(false);\n  const [message, setMessage] = useState<Message | null>(null);\n\n  const streamRef = useRef<MediaStream | null>(null);\n  const recorderRef = useRef<MediaRecorder | null>(null);\n  const activeTabRef = useRef(activeTab);\n  activeTabRef.current = activeTab;\n\n  useEffect(() => {\n    if (!open) {\n      setActiveTab('texto');\n      setDraft('');\n      setMessage(null);\n      setBusy(false);\n      setRecording(false);\n    }\n  }, [open]);\n\n  useEffect(() => {\n    return () => {\n      streamRef.current?.getTracks().forEach((track) => track.stop());\n    };\n  }, []);\n\n  function handleOpenChange(next: boolean) {\n    if (!next) {\n      if (recording && recorderRef.current && recorderRef.current.state !== 'inactive') {\n        recorderRef.current.stop();\n      }\n    }\n    onOpenChange(next);\n  }\n\n  async function addImportedFromDraft() {\n    const text = draft.trim();\n    if (text.length < 3) {\n      setMessage({ type: 'err', text: 'Escreva ou fale as ofertas antes de extrair.' });\n      return;\n    }\n    setBusy(true);\n    setMessage(null);\n    try {\n      const result = await parseOffers({ text });\n      const items = toNewOffers(result.products ?? []);\n      if (items.length === 0) {\n        throw new Error('Não identifiquei ofertas no texto. Tente de outra forma.');\n      }\n      const plural = items.length > 1 ? 's' : '';\n      onAddMany(items);\n      setDraft('');\n      setMessage({ type: 'ok', text: `${items.length} oferta${plural} adicionada${plural} à página.` });\n    } catch (error) {\n      setMessage(messageFor(error));\n    } finally {\n      setBusy(false);\n    }\n  }\n\n  async function applyCommand() {\n    const command = draft.trim();\n    if (command.length < 3) {\n      setMessage({ type: 'err', text: 'Descreva a correção que deseja aplicar.' });\n      return;\n    }\n    if (offers.length === 0) {\n      setMessage({ type: 'err', text: 'Esta página ainda não tem ofertas para corrigir.' });\n      return;\n    }\n    setBusy(true);\n    setMessage(null);\n    try {\n      const payload = offers.map((offer) => ({\n        id: offer.id,\n        name: offer.name,\n        brand: offer.brand || '',\n        size: offer.size || '',\n        price: Number(offer.price) || 0,\n        oldPrice: offer.oldPrice ?? null,\n        category: offer.category || '',\n        qty: offer.qty || '',\n      }));\n      const result = await correctOffers({ command, products: payload });\n      const source = Array.isArray(result.products) ? result.products : [];\n      if (source.length === 0) {\n        throw new Error('A correção não retornou produtos válidos.');\n      }\n      const nextOffers: Offer[] = source.map((item: any) => {\n        const known = offers.find((offer) => offer.id === item?.id);\n        const fallback = known ?? {};\n        return {\n          ...(known ? { ...known } : {}),\n          id: known?.id ?? newId(),\n          name: String(item?.name ?? fallback.name ?? 'Produto').trim() || 'Produto',\n          brand: typeof item?.brand === 'string' ? item.brand : typeof fallback.brand === 'string' ? fallback.brand : '',\n          size: typeof item?.size === 'string' ? item.size : typeof fallback.size === 'string' ? fallback.size : '',\n          price: Number(item?.price ?? fallback.price) || 0,\n          oldPrice: item?.oldPrice !== undefined && item?.oldPrice !== null ? Number(item.oldPrice) : (known?.oldPrice ?? null),\n          category: typeof item?.category === 'string' ? item.category : typeof fallback.category === 'string' ? fallback.category : 'Outros',\n          qty: typeof item?.qty === 'string' ? item.qty : typeof fallback.qty === 'string' ? fallback.qty : '',\n          highlight: !!known?.highlight,\n        };\n      });\n      onReplaceAll(nextOffers);\n      setDraft('');\n      setMessage({ type: 'ok', text: 'Correção aplicada à página.' });\n    } catch (error) {\n      setMessage(messageFor(error));\n    } finally {\n      setBusy(false);\n    }\n  }\n\n  async function toggleRecording() {\n    if (recording) {\n      if (recorderRef.current && recorderRef.current.state !== 'inactive') {\n        recorderRef.current.stop();\n      }\n      return;\n    }\n\n    setMessage(null);\n    try {\n      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });\n      streamRef.current = stream;\n      const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];\n      const mimeType = candidates.find((candidate) => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(candidate));\n      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);\n      const chunks: Blob[] = [];\n      const modeAtStart = activeTabRef.current;\n\n      recorder.ondataavailable = (event) => {\n        if (event.data && event.data.size > 0) chunks.push(event.data);\n      };\n\n      recorder.onstop = async () => {\n        stream.getTracks().forEach((track) => track.stop());\n        setRecording(false);\n        if (chunks.length === 0) {\n          setMessage({ type: 'err', text: 'Nenhum áudio foi captado. Tente novamente.' });\n          return;\n        }\n        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });\n        setBusy(true);\n        try {\n          const audioBase64 = await blobToBase64(blob);\n          const format = blob.type.includes('mp4') ? 'mp4' : 'webm';\n          const transcription = await transcribeOffers({ audioBase64, format });\n          const text = (transcription.text || '').trim();\n          if (!text) {\n            throw new Error('Transcrevi o áudio, mas não consegui ler as ofertas. Tente falar mais devagar.');\n          }\n          setDraft(text);\n          if (modeAtStart === 'comando') {\n            setActiveTab('comando');\n            setMessage({ type: 'ok', text: 'Comando transcrito. Revise e clique em Aplicar correção.' });\n          } else {\n            setActiveTab('texto');\n            setMessage({ type: 'ok', text: 'Áudio transcrito. Revise o texto antes de adicionar as ofertas.' });\n          }\n        } catch (error) {\n          setMessage(messageFor(error));\n        } finally {\n          setBusy(false);\n        }\n      };\n\n      recorderRef.current = recorder;\n      setRecording(true);\n      recorder.start();\n    } catch (error) {\n      setMessage({ type: 'err', text: 'Não foi possível acessar o microfone. Verifique a permissão do navegador.' });\n    }\n  }\n\n  const actionDisabled = busy || draft.trim().length < 3;\n\n  return (\n    <Dialog open={open} onOpenChange={handleOpenChange}>\n      <DialogContent className='sm:max-w-lg'>\n        <DialogHeader>\n          <DialogTitle>Adicionar ofertas com IA</DialogTitle>\n          <DialogDescription>\n            Digite, cole ou fale as ofertas. A IA identifica os produtos e preços e adiciona à página atual do encarte.\n          </DialogDescription>\n        </DialogHeader>\n\n        <Tabs\n          value={activeTab}\n          onValueChange={(value) => {\n            setActiveTab(value as 'texto' | 'voz' | 'comando');\n            setMessage(null);\n          }}\n        >\n          <TabsList className='grid w-full grid-cols-3'>\n            <TabsTrigger value='texto'>Texto</TabsTrigger>\n            <TabsTrigger value='voz'>Voz</TabsTrigger>\n            <TabsTrigger value='comando'>Corrigir</TabsTrigger>\n          </TabsList>\n          <TabsContent value='texto' className='mt-2 text-sm text-muted-foreground'>\n            Cole aqui uma lista digitada, como: arroz 5kg 29,90, feijão 1kg 7,49, óleo de soja 900ml 6,99.\n          </TabsContent>\n          <TabsContent value='voz' className='mt-2 text-sm text-muted-foreground'>\n            Toque em Gravar áudio e fale as ofertas. O áudio será transcrito abaixo para você revisar antes de adicionar.\n          </TabsContent>\n          <TabsContent value='comando' className='mt-2 text-sm text-muted-foreground'>\n            Descreva uma correção para as ofertas desta página, como: renomeie arroz para Arroz Tipo 1 e troque o preço para 27,90.\n          </TabsContent>\n        </Tabs>\n\n        <div className='space-y-3'>\n          <Textarea\n            value={draft}\n            onChange={(event) => setDraft(event.target.value)}\n            placeholder={\n              activeTab === 'comando'\n                ? 'Exemplo: corrija o segundo item para Feijão Carioca 1kg por 6,49'\n                : 'Exemplo: Leite Integral 1L 4,99, Café 500g 18,90, Detergente 900ml 2,79'\n            }\n            rows={5}\n            className='resize-none'\n          />\n\n          {message && (\n            <p\n              className={message.type === 'err' ? 'rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive' : 'rounded-lg bg-primary/10 px-3 py-2 text-sm text-primary'}\n            >\n              {message.text}\n            </p>\n          )}\n\n          <div className='flex flex-col gap-2 sm:flex-row'>\n            <Button\n              type='button'\n              variant={recording ? 'destructive' : 'outline'}\n              className='gap-2'\n              onClick={toggleRecording}\n              disabled={busy}\n            >\n              {recording ? (<><Square className='h-4 w-4' /> Parar gravação</>) : (<><Mic className='h-4 w-4' /> Gravar áudio</>)}\n            </Button>\n\n            {activeTab === 'comando' ? (\n              <Button type='button' className='flex-1 gap-2' onClick={applyCommand} disabled={actionDisabled}>\n                {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : <Wand2 className='h-4 w-4' />}\n                Aplicar correção\n              </Button>\n            ) : (\n              <Button type='button' className='flex-1 gap-2' onClick={addImportedFromDraft} disabled={actionDisabled}>\n                {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : <Wand2 className='h-4 w-4' />}\n                Extrair e adicionar\n              </Button>\n            )}\n          </div>\n        </div>\n      </DialogContent>\n    </Dialog>\n  );\n}\n
+import { useEffect, useRef, useState } from 'react';
+import { Loader2, Mic, Square, Wand2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { correctOffers, parseOffers, transcribeOffers } from '@/lib/ai.functions';
+import { newId, type Offer } from '@/lib/flyer-types';
+
+type OfferImportDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  offers: Offer[];
+  onAddMany: (items: Offer[]) => void;
+  onReplaceAll: (items: Offer[]) => void;
+};
+
+type Message = { type: 'ok' | 'err'; text: string };
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.includes(',') ? result.split(',')[1] : result;
+      resolve(base64 || '');
+    };
+    reader.onerror = () => reject(reader.error ?? new Error('Não foi possível ler o áudio.'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function toNewOffers(items: any[]): Offer[] {
+  return items.map((item) => ({
+    id: newId(),
+    name: String(item?.name ?? 'Produto').trim() || 'Produto',
+    brand: typeof item?.brand === 'string' ? item.brand.trim() : '',
+    size: typeof item?.size === 'string' ? item.size.trim() : '',
+    price: Number(item?.price) || 0,
+    oldPrice: item?.oldPrice == null ? null : Number(item.oldPrice),
+    category: typeof item?.category === 'string' ? item.category : 'Outros',
+    qty: typeof item?.qty === 'string' ? item.qty : '',
+  }));
+}
+
+function messageFor(error: unknown): Message {
+  return {
+    type: 'err',
+    text: error instanceof Error ? error.message : 'Não foi possível concluir. Tente novamente.',
+  };
+}
+
+export function OfferImportDialog({
+  open,
+  onOpenChange,
+  offers,
+  onAddMany,
+  onReplaceAll,
+}: OfferImportDialogProps) {
+  const [activeTab, setActiveTab] = useState<'texto' | 'voz' | 'comando'>('texto');
+  const [draft, setDraft] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [message, setMessage] = useState<Message | null>(null);
+
+  const streamRef = useRef<MediaStream | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
+
+  useEffect(() => {
+    if (!open) {
+      setActiveTab('texto');
+      setDraft('');
+      setMessage(null);
+      setBusy(false);
+      setRecording(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
+  function handleOpenChange(next: boolean) {
+    if (!next) {
+      if (recording && recorderRef.current && recorderRef.current.state !== 'inactive') {
+        recorderRef.current.stop();
+      }
+    }
+    onOpenChange(next);
+  }
+
+  async function addImportedFromDraft() {
+    const text = draft.trim();
+    if (text.length < 3) {
+      setMessage({ type: 'err', text: 'Escreva ou fale as ofertas antes de extrair.' });
+      return;
+    }
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await parseOffers({ text });
+      const items = toNewOffers(result.products ?? []);
+      if (items.length === 0) {
+        throw new Error('Não identifiquei ofertas no texto. Tente de outra forma.');
+      }
+      const plural = items.length > 1 ? 's' : '';
+      onAddMany(items);
+      setDraft('');
+      setMessage({ type: 'ok', text: `${items.length} oferta${plural} adicionada${plural} à página.` });
+    } catch (error) {
+      setMessage(messageFor(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function applyCommand() {
+    const command = draft.trim();
+    if (command.length < 3) {
+      setMessage({ type: 'err', text: 'Descreva a correção que deseja aplicar.' });
+      return;
+    }
+    if (offers.length === 0) {
+      setMessage({ type: 'err', text: 'Esta página ainda não tem ofertas para corrigir.' });
+      return;
+    }
+    setBusy(true);
+    setMessage(null);
+    try {
+      const payload = offers.map((offer) => ({
+        id: offer.id,
+        name: offer.name,
+        brand: offer.brand || '',
+        size: offer.size || '',
+        price: Number(offer.price) || 0,
+        oldPrice: offer.oldPrice ?? null,
+        category: offer.category || '',
+        qty: offer.qty || '',
+      }));
+      const result = await correctOffers({ command, products: payload });
+      const source = Array.isArray(result.products) ? result.products : [];
+      if (source.length === 0) {
+        throw new Error('A correção não retornou produtos válidos.');
+      }
+      const nextOffers: Offer[] = source.map((item: any) => {
+        const known = offers.find((offer) => offer.id === item?.id);
+        const fallback = known ?? {};
+        return {
+          ...(known ? { ...known } : {}),
+          id: known?.id ?? newId(),
+          name: String(item?.name ?? fallback.name ?? 'Produto').trim() || 'Produto',
+          brand: typeof item?.brand === 'string' ? item.brand : typeof fallback.brand === 'string' ? fallback.brand : '',
+          size: typeof item?.size === 'string' ? item.size : typeof fallback.size === 'string' ? fallback.size : '',
+          price: Number(item?.price ?? fallback.price) || 0,
+          oldPrice: item?.oldPrice !== undefined && item?.oldPrice !== null ? Number(item.oldPrice) : (known?.oldPrice ?? null),
+          category: typeof item?.category === 'string' ? item.category : typeof fallback.category === 'string' ? fallback.category : 'Outros',
+          qty: typeof item?.qty === 'string' ? item.qty : typeof fallback.qty === 'string' ? fallback.qty : '',
+          highlight: !!known?.highlight,
+        };
+      });
+      onReplaceAll(nextOffers);
+      setDraft('');
+      setMessage({ type: 'ok', text: 'Correção aplicada à página.' });
+    } catch (error) {
+      setMessage(messageFor(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function toggleRecording() {
+    if (recording) {
+      if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+        recorderRef.current.stop();
+      }
+      return;
+    }
+
+    setMessage(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+      const mimeType = candidates.find((candidate) => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(candidate));
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      const chunks: Blob[] = [];
+      const modeAtStart = activeTabRef.current;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) chunks.push(event.data);
+      };
+
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        setRecording(false);
+        if (chunks.length === 0) {
+          setMessage({ type: 'err', text: 'Nenhum áudio foi captado. Tente novamente.' });
+          return;
+        }
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        setBusy(true);
+        try {
+          const audioBase64 = await blobToBase64(blob);
+          const format = blob.type.includes('mp4') ? 'mp4' : 'webm';
+          const transcription = await transcribeOffers({ audioBase64, format });
+          const text = (transcription.text || '').trim();
+          if (!text) {
+            throw new Error('Transcrevi o áudio, mas não consegui ler as ofertas. Tente falar mais devagar.');
+          }
+          setDraft(text);
+          if (modeAtStart === 'comando') {
+            setActiveTab('comando');
+            setMessage({ type: 'ok', text: 'Comando transcrito. Revise e clique em Aplicar correção.' });
+          } else {
+            setActiveTab('texto');
+            setMessage({ type: 'ok', text: 'Áudio transcrito. Revise o texto antes de adicionar as ofertas.' });
+          }
+        } catch (error) {
+          setMessage(messageFor(error));
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      recorderRef.current = recorder;
+      setRecording(true);
+      recorder.start();
+    } catch (error) {
+      setMessage({ type: 'err', text: 'Não foi possível acessar o microfone. Verifique a permissão do navegador.' });
+    }
+  }
+
+  const actionDisabled = busy || draft.trim().length < 3;
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className='sm:max-w-lg'>
+        <DialogHeader>
+          <DialogTitle>Adicionar ofertas com IA</DialogTitle>
+          <DialogDescription>
+            Digite, cole ou fale as ofertas. A IA identifica os produtos e preços e adiciona à página atual do encarte.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => {
+            setActiveTab(value as 'texto' | 'voz' | 'comando');
+            setMessage(null);
+          }}
+        >
+          <TabsList className='grid w-full grid-cols-3'>
+            <TabsTrigger value='texto'>Texto</TabsTrigger>
+            <TabsTrigger value='voz'>Voz</TabsTrigger>
+            <TabsTrigger value='comando'>Corrigir</TabsTrigger>
+          </TabsList>
+          <TabsContent value='texto' className='mt-2 text-sm text-muted-foreground'>
+            Cole aqui uma lista digitada, como: arroz 5kg 29,90, feijão 1kg 7,49, óleo de soja 900ml 6,99.
+          </TabsContent>
+          <TabsContent value='voz' className='mt-2 text-sm text-muted-foreground'>
+            Toque em Gravar áudio e fale as ofertas. O áudio será transcrito abaixo para você revisar antes de adicionar.
+          </TabsContent>
+          <TabsContent value='comando' className='mt-2 text-sm text-muted-foreground'>
+            Descreva uma correção para as ofertas desta página, como: renomeie arroz para Arroz Tipo 1 e troque o preço para 27,90.
+          </TabsContent>
+        </Tabs>
+
+        <div className='space-y-3'>
+          <Textarea
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder={
+              activeTab === 'comando'
+                ? 'Exemplo: corrija o segundo item para Feijão Carioca 1kg por 6,49'
+                : 'Exemplo: Leite Integral 1L 4,99, Café 500g 18,90, Detergente 900ml 2,79'
+            }
+            rows={5}
+            className='resize-none'
+          />
+
+          {message && (
+            <p
+              className={message.type === 'err' ? 'rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive' : 'rounded-lg bg-primary/10 px-3 py-2 text-sm text-primary'}
+            >
+              {message.text}
+            </p>
+          )}
+
+          <div className='flex flex-col gap-2 sm:flex-row'>
+            <Button
+              type='button'
+              variant={recording ? 'destructive' : 'outline'}
+              className='gap-2'
+              onClick={toggleRecording}
+              disabled={busy}
+            >
+              {recording ? (<><Square className='h-4 w-4' /> Parar gravação</>) : (<><Mic className='h-4 w-4' /> Gravar áudio</>)}
+            </Button>
+
+            {activeTab === 'comando' ? (
+              <Button type='button' className='flex-1 gap-2' onClick={applyCommand} disabled={actionDisabled}>
+                {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : <Wand2 className='h-4 w-4' />}
+                Aplicar correção
+              </Button>
+            ) : (
+              <Button type='button' className='flex-1 gap-2' onClick={addImportedFromDraft} disabled={actionDisabled}>
+                {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : <Wand2 className='h-4 w-4' />}
+                Extrair e adicionar
+              </Button>
+            )}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
