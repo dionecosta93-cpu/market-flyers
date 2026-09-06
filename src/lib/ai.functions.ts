@@ -415,6 +415,53 @@ Responda APENAS JSON:
   });
 
 
+/** Verificação final do encarte antes de exportar */
+export const verifyFlyer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { products: unknown; headline: string; subheadline: string }) =>
+    z.object({
+      products: z.any(),
+      headline: z.string().max(120),
+      subheadline: z.string().max(200),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const raw = await callChat({
+      messages: [
+        {
+          role: "system",
+          content: `Você é um revisor sênior de encartes de supermercado.
+Receba os dados do encarte e realize uma verificação completa de qualidade.
+
+Verifique:
+1. Nomes de produtos estão corretos e sem abreviações estranhas
+2. Preços estão corretos e em formato válido
+3. Não há produtos duplicados
+4. Não há produtos com preço zero ou negativo
+5. Não há nomes vazios
+6. Há pelo menos 1 produto no encarte
+7. Título e subtítulo estão adequados
+8. Categorias estão corretas
+
+Responda APENAS JSON: {"issues":[{"severity":"error"|"warning","message":"descrição do problema","productId":"id ou null"}],"approved":true/false}
+
+Se aprovado, approved=true e issues=[].
+Se houver problemas, approved=false e liste todos os issues.`,
+        },
+        { role: "user", content: JSON.stringify({ products: data.products, headline: data.headline, subheadline: data.subheadline }) },
+      ],
+      jsonMode: true,
+    });
+
+    const parsed = extractJson(raw);
+    await logUsage(context.userId, "verificacao", {});
+    return {
+      issues: Array.isArray(parsed?.issues) ? parsed.issues : [],
+      approved: parsed?.approved === true,
+    };
+  });
+
+
 /** Geração de imagem de produto para encartes com DALL-E 3 */
 export const generateProductImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

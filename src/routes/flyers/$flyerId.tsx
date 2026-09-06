@@ -10,6 +10,14 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   ShoppingBag,
   Plus,
   Trash2,
@@ -28,7 +36,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthView, useAuthSession } from "@/components/auth-view";
-import { organizeFlyer } from "@/lib/ai.functions";
+import { organizeFlyer, verifyFlyer } from "@/lib/ai.functions";
 import { OfferImportDialog } from "@/components/offer-import-dialog";
 import { ProductImageDialog } from "@/components/product-image-dialog";
 import {
@@ -66,17 +74,20 @@ function PageCanvas({
   settings,
   templateId,
   layoutMode = "grade",
+  onReorder,
 }: {
   page: FlyerPage;
   settings: FlyerSettings;
   templateId: string;
   layoutMode?: "grade" | "destaque" | "misto";
+  onReorder?: (fromIndex: number, toIndex: number) => void;
 }) {
   const tpl = templateById(templateId || "tradicional");
   const scale = settings.fontScale || 1;
   const items = page?.items || [];
   const highlighted = items.filter((i) => i.highlight);
   const normal = items.filter((i) => !i.highlight);
+  const [dragId, setDragId] = useState<string | null>(null);
 
   return (
     <div
@@ -125,19 +136,69 @@ function PageCanvas({
               }}
             >
               {highlighted.map((offer) => (
-                <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} prominent />
+                <ProductCard
+                  key={offer.id}
+                  offer={offer}
+                  template={tpl}
+                  scale={scale}
+                  prominent
+                  draggable
+                  onDragStart={setDragId}
+                  onDragEnd={() => setDragId(null)}
+                  onDrop={(id) => {
+                    const fromIdx = items.findIndex((i) => i.id === dragId);
+                    const toIdx = items.findIndex((i) => i.id === id);
+                    if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
+                      onReorder?.(fromIdx, toIdx);
+                    }
+                    setDragId(null);
+                  }}
+                />
               ))}
             </div>
             <div className="grid grid-cols-2 gap-3 content-start">
               {normal.map((offer) => (
-                <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} />
+                <ProductCard
+                  key={offer.id}
+                  offer={offer}
+                  template={tpl}
+                  scale={scale}
+                  draggable
+                  onDragStart={setDragId}
+                  onDragEnd={() => setDragId(null)}
+                  onDrop={(id) => {
+                    const fromIdx = items.findIndex((i) => i.id === dragId);
+                    const toIdx = items.findIndex((i) => i.id === id);
+                    if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
+                      onReorder?.(fromIdx, toIdx);
+                    }
+                    setDragId(null);
+                  }}
+                />
               ))}
             </div>
           </div>
         ) : (
           <div className="h-full grid grid-cols-2 gap-3 content-start">
             {items.map((offer) => (
-              <ProductCard key={offer.id} offer={offer} template={tpl} scale={scale} prominent={!!offer.highlight} />
+              <ProductCard
+                key={offer.id}
+                offer={offer}
+                template={tpl}
+                scale={scale}
+                prominent={!!offer.highlight}
+                draggable
+                onDragStart={setDragId}
+                onDragEnd={() => setDragId(null)}
+                onDrop={(id) => {
+                  const fromIdx = items.findIndex((i) => i.id === dragId);
+                  const toIdx = items.findIndex((i) => i.id === id);
+                  if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
+                    onReorder?.(fromIdx, toIdx);
+                  }
+                  setDragId(null);
+                }}
+              />
             ))}
           </div>
         )}
@@ -167,14 +228,29 @@ function ProductCard({
   template,
   scale,
   prominent = false,
+  draggable = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
 }: {
   offer: Offer;
   template: FlyerTemplate;
   scale: number;
   prominent?: boolean;
+  draggable?: boolean;
+  onDragStart?: (id: string) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (id: string) => void;
+  onDragEnd?: () => void;
 }) {
   return (
     <div
+      draggable={draggable}
+      onDragStart={() => onDragStart?.(offer.id)}
+      onDragOver={(e) => { e.preventDefault(); onDragOver?.(e); }}
+      onDrop={() => onDrop?.(offer.id)}
+      onDragEnd={onDragEnd}
       className={`flex flex-col min-h-0 ${prominent ? "md:col-span-2" : ""}`}
       style={{
         backgroundColor: template.card,
@@ -187,6 +263,8 @@ function ProductCard({
         borderWidth: "1px",
         borderStyle: "solid",
         padding: prominent ? "16px" : "12px",
+        cursor: draggable ? "grab" : "default",
+        opacity: draggable ? undefined : 1,
       }}
     >
       <div className="min-w-0 flex-1">
@@ -272,6 +350,43 @@ function FlyerEditorPage() {
 
   const [importOpen, setImportOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<{ approved: boolean; issues: Array<{ severity: string; message: string; productId?: string }> } | null>(null);
+
+  async function handleVerify() {
+    const flat = pages.flatMap((p) => p.items || []);
+    if (flat.length === 0) return;
+    setVerifying(true);
+    setVerifyOpen(true);
+    setVerifyResult(null);
+    try {
+      const result = await verifyFlyer({
+        data: {
+          products: flat.map((o) => ({
+            id: o.id,
+            name: o.name,
+            brand: o.brand || "",
+            size: o.size || "",
+            price: Number(o.price) || 0,
+            oldPrice: o.oldPrice ?? null,
+            category: o.category || "",
+          })),
+          headline: title,
+          subheadline: settings.subheadline || "",
+        },
+      });
+      setVerifyResult(result);
+    } catch (error) {
+      console.error(error);
+      setVerifyResult({
+        approved: false,
+        issues: [{ severity: "error", message: "Não foi possível realizar a verificação. Tente novamente." }],
+      });
+    } finally {
+      setVerifying(false);
+    }
+  }
 
   useEffect(() => {
     if (!session) {
@@ -619,6 +734,8 @@ function FlyerEditorPage() {
     }
   }
 
+  const [autoOrganizing, setAutoOrganizing] = useState(false);
+
   const saveLabel =
     saveState === "saving"
       ? "Salvando..."
@@ -627,6 +744,65 @@ function FlyerEditorPage() {
         : saveState === "error"
           ? "Erro ao salvar"
           : "Alterações salvas automaticamente";
+
+  useEffect(() => {
+    if (!session || !loaded) return;
+    let cancelled = false;
+    setAutoOrganizing(true);
+    const timeout = setTimeout(async () => {
+      const flat = pages.flatMap((p) => p.items || []);
+      if (flat.length === 0 || !cancelled) {
+        setAutoOrganizing(false);
+        return;
+      }
+      try {
+        const result = await organizeFlyer({
+          data: {
+            products: flat.map((o) => ({
+              id: o.id,
+              name: o.name,
+              brand: o.brand || "",
+              size: o.size || "",
+              price: Number(o.price) || 0,
+              oldPrice: o.oldPrice ?? null,
+            })),
+            perPage,
+          },
+        });
+        if (cancelled) return;
+        const byId = new Map(flat.map((o) => [o.id, o]));
+        const ordered: Offer[] = [];
+        result.order.forEach((id: string) => {
+          const item = byId.get(String(id));
+          if (item) {
+            ordered.push({ ...item, highlight: result.highlight.includes(String(id)) });
+            byId.delete(String(id));
+          }
+        });
+        byId.forEach((item) => ordered.push({ ...item, highlight: false }));
+        const chunks: FlyerPage[] = [];
+        for (let i = 0; i < ordered.length; i += perPage) {
+          chunks.push({ id: newId(), items: ordered.slice(i, i + perPage) });
+        }
+        setPages(chunks.length ? chunks : [{ id: newId(), items: [] }]);
+        setActiveIndex(0);
+        setSelectedOfferId(null);
+        setSettings((prev) => ({
+          ...prev,
+          headline: result.headline || prev.headline,
+          subheadline: result.subheadline || prev.subheadline,
+        }));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (!cancelled) setAutoOrganizing(false);
+      }
+    }, 400);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
+  }, [format]);
 
   if (authLoading) {
     return (
@@ -1200,6 +1376,17 @@ function FlyerEditorPage() {
               {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Corrigir com IA
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleVerify}
+              disabled={verifying || offers.length === 0}
+              title="Verificar encarte com IA"
+            >
+              {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              Verificar com IA
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="sm" className="gap-2">
@@ -1225,7 +1412,20 @@ function FlyerEditorPage() {
               height: Math.round(fmt.height * 0.4),
             }}
           >
-            <PageCanvas page={activePage} settings={settings} templateId={template} layoutMode="grade" />
+            <PageCanvas
+              page={activePage}
+              settings={settings}
+              templateId={template}
+              layoutMode="grade"
+              onReorder={(fromIndex, toIndex) => {
+                setActivePageItems((items) => {
+                  const next = [...items];
+                  const [moved] = next.splice(fromIndex, 1);
+                  next.splice(toIndex, 0, moved);
+                  return next;
+                });
+              }}
+            />
           </div>
         </div>
 
@@ -1238,3 +1438,48 @@ function FlyerEditorPage() {
     </div>
   );
 }
+
+<AlertDialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>
+        {verifying ? "Verificando encarte..." : verifyResult?.approved ? "Encarte aprovado" : "Problemas encontrados"}
+      </AlertDialogTitle>
+      <AlertDialogDescription>
+        {verifying
+          ? "A IA está analisando seu encarte. Aguarde..."
+          : verifyResult?.approved
+            ? "Seu encarte passou em todas as verificações de qualidade."
+            : "Encontramos alguns pontos que podem ser melhorados:"}
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <div className="max-h-[60vh] overflow-y-auto space-y-2">
+      {verifying && (
+        <div className="flex items-center justify-center gap-2 py-8">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm text-muted-foreground">Verificando...</span>
+        </div>
+      )}
+      {!verifying && verifyResult?.issues && verifyResult.issues.length > 0 && (
+        <div className="space-y-2">
+          {verifyResult.issues.map((issue, idx) => (
+            <div
+              key={idx}
+              className={`rounded-lg border p-3 text-sm ${
+                issue.severity === "error"
+                  ? "border-destructive/40 bg-destructive/10 text-destructive"
+                  : "border-yellow-500/40 bg-yellow-500/10 text-yellow-700"
+              }`}
+            >
+              <p className="font-medium">{issue.severity === "error" ? "Erro" : "Aviso"}</p>
+              <p>{issue.message}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+    <AlertDialogFooter>
+      <Button onClick={() => setVerifyOpen(false)}>Fechar</Button>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
