@@ -87,27 +87,27 @@ export function AuthView() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 px-4 py-12">
-      <Card className="w-full max-w-md shadow-xl bg-white border border-slate-200/80 rounded-2xl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4 py-12">
+      <Card className="w-full max-w-md shadow-xl bg-slate-900 border border-slate-700/80 rounded-2xl">
         <CardHeader className="text-center pb-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d91a1a] via-[#b91c1c] to-[#991b1b] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-500/25">
             <ShoppingBag className="w-7 h-7 text-white" />
           </div>
-          <CardTitle className="text-2xl font-black tracking-tight text-slate-900">
+          <CardTitle className="text-2xl font-black tracking-tight text-white">
             Market Flyers
           </CardTitle>
-          <CardDescription className="text-slate-500 text-sm">
+          <CardDescription className="text-slate-300 text-sm">
             Acesse sua conta para criar e editar encartes de ofertas
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center p-1 bg-slate-100 rounded-xl mb-6 border border-slate-200/70">
+          <div className="flex items-center p-1 bg-slate-800 rounded-xl mb-6 border border-slate-700/70">
             <button
               type="button"
               className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
                 mode === "login"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
+                  ? "bg-slate-900 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-100"
               }`}
               onClick={() => {
                 setMode("login");
@@ -121,8 +121,8 @@ export function AuthView() {
               type="button"
               className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
                 mode === "signup"
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
+                  ? "bg-slate-900 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-100"
               }`}
               onClick={() => {
                 setMode("signup");
@@ -137,7 +137,7 @@ export function AuthView() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div className="space-y-1.5">
-                <Label htmlFor="auth-name" className="text-xs font-semibold text-slate-700">
+                <Label htmlFor="auth-name" className="text-xs font-semibold text-slate-200">
                   Seu nome
                 </Label>
                 <Input
@@ -146,13 +146,13 @@ export function AuthView() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   autoComplete="name"
-                  className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
+                  className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-[#d91a1a]/40 focus-visible:border-[#d91a1a] h-10"
                 />
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="auth-email" className="text-xs font-semibold text-slate-700">
+              <Label htmlFor="auth-email" className="text-xs font-semibold text-slate-200">
                 E-mail
               </Label>
               <Input
@@ -163,12 +163,12 @@ export function AuthView() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
-                className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
+                className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-[#d91a1a]/40 focus-visible:border-[#d91a1a] h-10"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="auth-password" className="text-xs font-semibold text-slate-700">
+              <Label htmlFor="auth-password" className="text-xs font-semibold text-slate-200">
                 Senha
               </Label>
               <Input
@@ -179,17 +179,17 @@ export function AuthView() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 required
-                className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
+                className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus-visible:ring-[#d91a1a]/40 focus-visible:border-[#d91a1a] h-10"
               />
             </div>
 
             {plainError && (
-              <div className="rounded-xl bg-red-50 border border-red-200 text-red-700 px-3.5 py-2.5 text-sm">
+              <div className="rounded-xl bg-red-900/40 border border-red-500/40 text-red-300 px-3.5 py-2.5 text-sm">
                 {plainError}
               </div>
             )}
             {notice && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2.5 text-sm">
+              <div className="rounded-xl bg-emerald-900/40 border border-emerald-500/40 text-emerald-300 px-3.5 py-2.5 text-sm">
                 {notice}
               </div>
             )}
