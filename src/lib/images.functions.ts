@@ -88,7 +88,7 @@ async function searchOpenFoodFacts(query: string, wanted: { name: string; brand:
  */
 export const searchProductImages = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; brand?: string; size?: string }) =>
+  .inputValidator((input: { name: string; brand?: string | undefined; size?: string | undefined }) =>
     z
       .object({
         name: z.string().min(1).max(160),
@@ -185,9 +185,9 @@ export const rememberProducts = createServerFn({ method: "POST" })
     (input: {
       products: Array<{
         name: string;
-        brand?: string;
-        size?: string;
-        category?: string;
+        brand?: string | undefined;
+        size?: string | undefined;
+        category?: string | undefined;
         price?: number;
         imageUrl?: string | null;
         imageSource?: string | null;
@@ -230,8 +230,8 @@ export const rememberProducts = createServerFn({ method: "POST" })
               size: product.size ?? "",
               category: product.category ?? null,
               last_price: product.price ?? null,
-              image_url: product.imageUrl ?? undefined,
-              image_source: product.imageSource ?? undefined,
+              image_url: product.imageUrl ?? null,
+              image_source: product.imageSource ?? null,
               times_used: (existing.times_used ?? 0) + 1,
             })
             .eq("id", existing.id);

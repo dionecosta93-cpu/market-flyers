@@ -51,11 +51,11 @@ export function ProductImageDialog({
     setSearching(true);
     setMessage(null);
     try {
-      const result = await searchProductImages({
+      const result = await searchProductImages({ data: {
         name: offer.name,
         brand: offer.brand || undefined,
         size: offer.size || undefined,
-      });
+      } });
       setCandidates(result.candidates);
       if (result.candidates.length === 0) {
         setMessage({ type: "err", text: "Não encontramos uma imagem adequada. Envie a sua ou gere com a IA." });
@@ -92,7 +92,7 @@ export function ProductImageDialog({
     setBusy(true);
     setMessage(null);
     try {
-      const { dataUrl } = await importImage({ url: candidate.url });
+      const { dataUrl } = await importImage({ data: { url: candidate.url } });
       onGenerated(dataUrl, candidate.sourceUrl || candidate.source);
       setMessage({ type: "ok", text: "Imagem aplicada ao produto." });
     } catch (error) {
@@ -135,12 +135,12 @@ export function ProductImageDialog({
     setBusy(true);
     setMessage(null);
     try {
-      const result = await generateProductImage({
+      const result = await generateProductImage({ data: {
         name: offer!.name || "Produto",
         brand: offer!.brand || undefined,
         size: offer!.size || undefined,
         category: offer!.category || undefined,
-      });
+      } });
       onGenerated(result.dataUrl, "Imagem gerada por IA");
       setMessage({ type: "ok", text: "Imagem gerada com sucesso." });
     } catch (error) {
