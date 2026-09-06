@@ -540,18 +540,29 @@ function FlyerEditorPage() {
                 <span className="text-sm font-medium text-muted-foreground">
                   {offers.length} {offers.length === 1 ? "produto" : "produtos"} nesta página
                 </span>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-1"
+                    className="gap-1 text-xs"
+                    onClick={handleOrganize}
+                    disabled={aiBusy || offers.length === 0}
+                    title="Organizar produtos, categorias e destaques com OpenAI"
+                  >
+                    {aiBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 text-emerald-600" />}
+                    Organizar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1 text-xs"
                     onClick={() => setImportOpen(true)}
                     disabled={aiBusy}
                   >
                     {aiBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                    IA
+                    Importar IA
                   </Button>
-                  <Button size="sm" variant="outline" className="gap-1" onClick={addOffer}>
+                  <Button size="sm" variant="outline" className="gap-1 text-xs" onClick={addOffer}>
                     <Plus className="w-3 h-3" />
                     Adicionar
                   </Button>

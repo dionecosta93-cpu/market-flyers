@@ -246,9 +246,15 @@ export function OfferImportDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader>
-          <DialogTitle>Adicionar ofertas com IA</DialogTitle>
+          <div className="flex items-center justify-between gap-2">
+            <DialogTitle>Adicionar ofertas com IA</DialogTitle>
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              OpenAI
+            </span>
+          </div>
           <DialogDescription>
-            Digite, cole ou fale as ofertas. A IA identifica os produtos e preços e adiciona à página atual do encarte.
+            Digite, cole ou fale as ofertas. A IA da OpenAI identifica produtos e preços e adiciona à página atual.
           </DialogDescription>
         </DialogHeader>
 

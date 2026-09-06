@@ -87,24 +87,26 @@ export function AuthView() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center">
-          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-3">
-            <ShoppingBag className="w-6 h-6 text-primary-foreground" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 px-4 py-12">
+      <Card className="w-full max-w-md shadow-xl bg-white border border-slate-200/80 rounded-2xl">
+        <CardHeader className="text-center pb-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d91a1a] via-[#b91c1c] to-[#991b1b] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-500/25">
+            <ShoppingBag className="w-7 h-7 text-white" />
           </div>
-          <CardTitle className="text-2xl">Market Flyers</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-black tracking-tight text-slate-900">Market Flyers</CardTitle>
+          <CardDescription className="text-slate-500 text-sm">
             Acesse sua conta para criar e editar encartes de ofertas
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center gap-1 mb-6">
-            <Button
+          <div className="flex items-center p-1 bg-slate-100 rounded-xl mb-6 border border-slate-200/70">
+            <button
               type="button"
-              variant={mode === "login" ? "default" : "ghost"}
-              size="sm"
-              className="w-32"
+              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+                mode === "login"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
               onClick={() => {
                 setMode("login");
                 setPlainError(null);
@@ -112,12 +114,14 @@ export function AuthView() {
               }}
             >
               Entrar
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant={mode === "signup" ? "default" : "ghost"}
-              size="sm"
-              className="w-32"
+              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+                mode === "signup"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
               onClick={() => {
                 setMode("signup");
                 setPlainError(null);
@@ -125,25 +129,26 @@ export function AuthView() {
               }}
             >
               Criar conta
-            </Button>
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="auth-name">Seu nome</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-name" className="text-xs font-semibold text-slate-700">Seu nome</Label>
                 <Input
                   id="auth-name"
                   placeholder="Maria da Silva"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   autoComplete="name"
+                  className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
                 />
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="auth-email">E-mail</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="auth-email" className="text-xs font-semibold text-slate-700">E-mail</Label>
               <Input
                 id="auth-email"
                 type="email"
@@ -152,11 +157,12 @@ export function AuthView() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+                className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="auth-password">Senha</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="auth-password" className="text-xs font-semibold text-slate-700">Senha</Label>
               <Input
                 id="auth-password"
                 type="password"
@@ -165,21 +171,26 @@ export function AuthView() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 required
+                className="bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-[#d91a1a]/20 focus-visible:border-[#d91a1a] h-10"
               />
             </div>
 
             {plainError && (
-              <div className="rounded-lg bg-destructive/10 text-destructive px-3 py-2 text-sm">
+              <div className="rounded-xl bg-red-50 border border-red-200 text-red-700 px-3.5 py-2.5 text-sm">
                 {plainError}
               </div>
             )}
             {notice && (
-              <div className="rounded-lg bg-emerald-100 text-emerald-800 px-3 py-2 text-sm">
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-3.5 py-2.5 text-sm">
                 {notice}
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={busy}>
+            <Button
+              type="submit"
+              className="w-full h-11 bg-gradient-to-r from-[#d91a1a] to-[#b91c1c] hover:from-[#b91c1c] hover:to-[#991b1b] text-white font-bold rounded-xl shadow-md shadow-red-600/20 transition-all text-sm"
+              disabled={busy}
+            >
               {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {mode === "login" ? "Entrar" : "Criar conta gratuita"}
             </Button>

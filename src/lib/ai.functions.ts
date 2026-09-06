@@ -2,45 +2,38 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const GATEWAY = "https://ai.gateway.lovable.dev/v1";
-const TEXT_MODEL = "google/gemini-3.7-flash";
-const IMAGE_MODEL = "google/gemini-3.1-flash-image";
+type AiProviderConfig = {
+  provider: "openai" | "lovable";
+  apiKey: string;
+  model: string;
+  imageModel: string;
+};
 
-type GatewayError = { status: number; message: string };
+function getAiConfig(): AiProviderConfig {
+  const openAiKey = process.env["OPENAI_API_KEY"]?.trim();
+  const lovableKey = process.env["LOVABLE_API_KEY"]?.trim();
 
-async function gateway(path: string, body: unknown): Promise<any> {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("A IA não está configurada neste projeto (LOVABLE_API_KEY ausente).");
-  const res = await fetch(`${GATEWAY}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    let message = text;
-    try {
-      const parsed = JSON.parse(text) as { error?: { message?: string }; message?: string };
-      message = parsed.error?.message ?? parsed.message ?? text;
-    } catch {
-      /* keep raw text */
-    }
-    const err: GatewayError = { status: res.status, message };
-    if (res.status === 429) throw new Error("A IA está recebendo muitos pedidos. Tente novamente em alguns segundos.");
-    if (res.status === 402) throw new Error(`Créditos de IA insuficientes: ${message}`);
-    if (res.status === 403) throw new Error(`A IA está bloqueada para este projeto: ${message}`);
-    throw new Error(`Falha na IA (${err.status}): ${err.message}`);
+  if (openAiKey) {
+    return {
+      provider: "openai",
+      apiKey: openAiKey,
+      model: process.env["OPENAI_MODEL"]?.trim() || "gpt-4o-mini",
+      imageModel: process.env["OPENAI_IMAGE_MODEL"]?.trim() || "dall-e-3",
+    };
   }
-  return res.json();
-}
 
-async function logUsage(userId: string, kind: string, meta: Record<string, unknown> = {}) {
-  try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("ai_usage").insert({ user_id: userId, kind, meta: meta as never });
-  } catch (error) {
-    console.error("ai_usage log failed", error);
+  if (lovableKey) {
+    return {
+      provider: "lovable",
+      apiKey: lovableKey,
+      model: "google/gemini-3.7-flash",
+      imageModel: "google/gemini-3.1-flash-image",
+    };
   }
+
+  throw new Error(
+    "A IA não está configurada neste projeto. Configure a variável OPENAI_API_KEY no arquivo .env para ativar a criação com IA da OpenAI.",
+  );
 }
 
 function firstText(json: any): string {
@@ -58,35 +51,228 @@ function extractJson(raw: string): any {
     const start = cleaned.indexOf("{");
     const end = cleaned.lastIndexOf("}");
     if (start >= 0 && end > start) return JSON.parse(cleaned.slice(start, end + 1));
-    throw new Error("Não foi possível interpretar a resposta da IA.");
+    throw new Error("Não foi possível interpretar a resposta estruturada da IA.");
   }
 }
 
-/** Audio (base64) -> transcript */
+async function logUsage(userId: string, kind: string, meta: Record<string, unknown> = {}) {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("ai_usage").insert({ user_id: userId, kind, meta: meta as never });
+  } catch (error) {
+    console.error("ai_usage log failed", error);
+  }
+}
+
+/** Executa chamada de Chat Completion (OpenAI ou gateway compatível) */
+async function callChat(params: {
+  messages: Array<{ role: string; content: any }>;
+  jsonMode?: boolean;
+}): Promise<string> {
+  const config = getAiConfig();
+
+  const baseUrl =
+    config.provider === "openai" ? "https://api.openai.com/v1" : "https://ai.gateway.lovable.dev/v1";
+
+  const payload: Record<string, any> = {
+    model: config.model,
+    messages: params.messages,
+  };
+
+  if (params.jsonMode) {
+    payload["response_format"] = { type: "json_object" };
+  }
+
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    let message = text;
+    try {
+      const parsed = JSON.parse(text);
+      message = parsed?.error?.message || parsed?.message || text;
+    } catch {
+      /* texto bruto */
+    }
+
+    if (res.status === 401) {
+      throw new Error(
+        "Chave de API inválida ou não autorizada. Verifique sua OPENAI_API_KEY no arquivo .env.",
+      );
+    }
+    if (res.status === 429) {
+      throw new Error(
+        "Limite de requisições ou créditos da OpenAI esgotados. Verifique seu saldo na plataforma da OpenAI.",
+      );
+    }
+    if (res.status === 402) {
+      throw new Error(`Créditos de IA insuficientes: ${message}`);
+    }
+    throw new Error(`Erro na chamada da IA (${res.status}): ${message}`);
+  }
+
+  const json = await res.json();
+  return firstText(json);
+}
+
+/** Transcrição de áudio para texto via OpenAI Whisper */
+async function callAudioTranscription(audioBase64: string, format: string): Promise<string> {
+  const config = getAiConfig();
+
+  if (config.provider === "openai") {
+    const buffer = Buffer.from(audioBase64, "base64");
+    const mimeType = format.includes("mp4") ? "audio/mp4" : "audio/webm";
+    const ext = format.includes("mp4") ? "mp4" : "webm";
+    const blob = new Blob([buffer], { type: mimeType });
+
+    const formData = new FormData();
+    formData.append("file", blob, `audio.${ext}`);
+    formData.append("model", "whisper-1");
+    formData.append("language", "pt");
+    formData.append("prompt", "Ofertas de supermercado com produtos, marcas e preços em reais.");
+
+    const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      let message = text;
+      try {
+        const parsed = JSON.parse(text);
+        message = parsed?.error?.message || text;
+      } catch {}
+      throw new Error(`Erro no Whisper da OpenAI (${res.status}): ${message}`);
+    }
+
+    const json = await res.json();
+    return String(json?.text ?? "").trim();
+  } else {
+    // Gateway Lovable com modalidade de áudio
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          {
+            role: "system",
+            content:
+              "Você transcreve áudio em português do Brasil. Devolva SOMENTE a transcrição literal, sem comentários.",
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Transcreva este áudio de ofertas de supermercado." },
+              { type: "input_audio", input_audio: { data: audioBase64, format } },
+            ],
+          },
+        ],
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Falha na transcrição: ${text}`);
+    }
+
+    const json = await res.json();
+    return firstText(json).trim();
+  }
+}
+
+/** Geração de imagem com DALL-E 3 da OpenAI */
+async function callImageGeneration(prompt: string): Promise<string> {
+  const config = getAiConfig();
+
+  if (config.provider === "openai") {
+    const res = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.imageModel,
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+        response_format: "b64_json",
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      let message = text;
+      try {
+        const parsed = JSON.parse(text);
+        message = parsed?.error?.message || text;
+      } catch {}
+      throw new Error(`Erro no DALL-E da OpenAI (${res.status}): ${message}`);
+    }
+
+    const json = await res.json();
+    const b64 = json?.data?.[0]?.b64_json;
+    if (b64) {
+      return `data:image/png;base64,${b64}`;
+    }
+    const url = json?.data?.[0]?.url;
+    if (url) {
+      return url;
+    }
+    throw new Error("A OpenAI não retornou uma imagem para este produto.");
+  } else {
+    // Gateway Lovable
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.imageModel,
+        messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
+        modalities: ["image", "text"],
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Falha na IA (${res.status}): ${text}`);
+    }
+
+    const json = await res.json();
+    const url: string | undefined =
+      json?.choices?.[0]?.message?.images?.[0]?.image_url?.url ??
+      (json?.data?.[0]?.b64_json ? `data:image/png;base64,${json.data[0].b64_json}` : undefined);
+
+    if (!url) throw new Error("A IA não retornou uma imagem para este produto.");
+    return url;
+  }
+}
+
+/** Audio (base64) -> transcrição com Whisper / IA */
 export const transcribeOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { audioBase64: string; format: string }) =>
     z.object({ audioBase64: z.string().min(10), format: z.string().min(2) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const json = await gateway("/chat/completions", {
-      model: TEXT_MODEL,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Você transcreve áudio em português do Brasil. Devolva SOMENTE a transcrição literal, sem comentários.",
-        },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: "Transcreva este áudio de ofertas de supermercado." },
-            { type: "input_audio", input_audio: { data: data.audioBase64, format: data.format } },
-          ],
-        },
-      ],
-    });
-    const text = firstText(json).trim();
+    const text = await callAudioTranscription(data.audioBase64, data.format);
     await logUsage(context.userId, "transcricao", { chars: text.length });
     return { text };
   });
@@ -105,21 +291,23 @@ Para cada produto retorne:
 - confident: true/false — false quando você não teve certeza do produto ou do preço
 Responda APENAS com JSON: {"products":[...]}. Se nada for identificável, {"products":[]}.`;
 
+/** Interpretação de texto e extração de ofertas via GPT-4o-mini */
 export const parseOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { text: string }) => z.object({ text: z.string().min(2).max(8000) }).parse(input))
   .handler(async ({ data, context }) => {
-    const json = await gateway("/chat/completions", {
-      model: TEXT_MODEL,
-      response_format: { type: "json_object" },
+    const raw = await callChat({
       messages: [
         { role: "system", content: OFFER_INSTRUCTIONS },
         { role: "user", content: data.text },
       ],
+      jsonMode: true,
     });
-    const parsed = extractJson(firstText(json));
+
+    const parsed = extractJson(raw);
     const products = Array.isArray(parsed?.products) ? parsed.products : [];
     await logUsage(context.userId, "interpretacao", { count: products.length });
+
     return {
       products: products.map((p: any) => ({
         name: String(p?.name ?? "").trim() || "Produto",
@@ -134,16 +322,14 @@ export const parseOffers = createServerFn({ method: "POST" })
     };
   });
 
-/** Voice/text correction over an existing product list */
+/** Correção e edição de ofertas via comando em linguagem natural */
 export const correctOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { command: string; products: unknown }) =>
     z.object({ command: z.string().min(2).max(2000), products: z.any() }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const json = await gateway("/chat/completions", {
-      model: TEXT_MODEL,
-      response_format: { type: "json_object" },
+    const raw = await callChat({
       messages: [
         {
           role: "system",
@@ -156,22 +342,22 @@ Mantenha o campo "id" de cada produto existente. Responda APENAS JSON: {"product
           content: `Lista atual:\n${JSON.stringify(data.products)}\n\nComando: ${data.command}`,
         },
       ],
+      jsonMode: true,
     });
-    const parsed = extractJson(firstText(json));
+
+    const parsed = extractJson(raw);
     await logUsage(context.userId, "correcao", {});
     return { products: Array.isArray(parsed?.products) ? parsed.products : [] };
   });
 
-/** AI layout organisation: returns ordered ids + highlights + suggested per_page */
+/** Organização inteligente de layout de encarte */
 export const organizeFlyer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { products: unknown; perPage: number }) =>
     z.object({ products: z.any(), perPage: z.number().min(1).max(20) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const json = await gateway("/chat/completions", {
-      model: TEXT_MODEL,
-      response_format: { type: "json_object" },
+    const raw = await callChat({
       messages: [
         {
           role: "system",
@@ -181,8 +367,10 @@ Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"cha
         },
         { role: "user", content: JSON.stringify({ products: data.products, perPage: data.perPage }) },
       ],
+      jsonMode: true,
     });
-    const parsed = extractJson(firstText(json));
+
+    const parsed = extractJson(raw);
     await logUsage(context.userId, "organizacao", {});
     return {
       order: Array.isArray(parsed?.order) ? parsed.order.map(String) : [],
@@ -192,7 +380,7 @@ Responda APENAS JSON: {"order":["id",...],"highlight":["id",...],"headline":"cha
     };
   });
 
-/** Generates a clean product image for flyer composition. Returns a data URL. */
+/** Geração de imagem de produto para encartes com DALL-E 3 */
 export const generateProductImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { name: string; brand?: string | undefined; size?: string | undefined; category?: string | undefined }) =>
@@ -210,15 +398,8 @@ export const generateProductImage = createServerFn({ method: "POST" })
     const prompt = `Foto de produto de supermercado para encarte promocional: ${descriptor}.
 Produto genérico, sem logotipos, sem marcas registradas e sem texto legível na embalagem.
 Fundo branco puro, iluminação de estúdio, produto centralizado e completo, alta nitidez, estilo catálogo.`;
-    const json = await gateway("/images/generations", {
-      model: IMAGE_MODEL,
-      messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
-      modalities: ["image", "text"],
-    });
-    const url: string | undefined =
-      json?.choices?.[0]?.message?.images?.[0]?.image_url?.url ??
-      (json?.data?.[0]?.b64_json ? `data:image/png;base64,${json.data[0].b64_json}` : undefined);
-    if (!url) throw new Error("A IA não retornou uma imagem para este produto.");
+
+    const dataUrl = await callImageGeneration(prompt);
     await logUsage(context.userId, "imagem", { product: data.name });
-    return { dataUrl: url };
+    return { dataUrl };
   });

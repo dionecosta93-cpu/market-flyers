@@ -273,11 +273,11 @@ export function ProductImageDialog({
 
             <TabsContent value="gerar" className="mt-3 space-y-3">
               <p className="text-sm text-muted-foreground">
-                Use só quando não existir uma foto real adequada do produto.
+                Cria uma imagem promocional com fundo branco em alta definição para o encarte usando o modelo <strong>DALL-E da OpenAI</strong>.
               </p>
               <Button onClick={handleGenerate} disabled={busy} className="w-full gap-2">
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                {busy ? "Gerando imagem..." : "Gerar imagem com IA"}
+                {busy ? "Gerando com DALL-E..." : "Gerar foto com DALL-E (OpenAI)"}
               </Button>
             </TabsContent>
           </Tabs>

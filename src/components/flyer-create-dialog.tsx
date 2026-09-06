@@ -70,7 +70,7 @@ export function FlyerCreateDialog({
     {
       id: '0',
       role: 'assistant',
-      text: 'Olá! Descreva as ofertas do seu encarte. Você pode digitar, colar uma lista ou falar no microfone. Exemplo: "Arroz 5kg 29,90, Feijão 1kg 7,49, Leite Integral 1L 4,99"',
+      text: 'Olá! Descreva as ofertas do seu encarte. Você pode digitar, colar uma lista ou falar no microfone. A IA da OpenAI identificará produtos, marcas e preços automaticamente. Exemplo: "Arroz 5kg 29,90, Feijão 1kg 7,49, Leite Integral 1L 4,99"',
     },
   ]);
   const [input, setInput] = useState('');
@@ -87,7 +87,7 @@ export function FlyerCreateDialog({
         {
           id: '0',
           role: 'assistant',
-          text: 'Olá! Descreva as ofertas do seu encarte. Você pode digitar, colar uma lista ou falar no microfone. Exemplo: "Arroz 5kg 29,90, Feijão 1kg 7,49, Leite Integral 1L 4,99"',
+          text: 'Olá! Descreva as ofertas do seu encarte. Você pode digitar, colar uma lista ou falar no microfone. A IA da OpenAI identificará produtos, marcas e preços automaticamente. Exemplo: "Arroz 5kg 29,90, Feijão 1kg 7,49, Leite Integral 1L 4,99"',
         },
       ]);
       setInput('');
@@ -243,10 +243,16 @@ export function FlyerCreateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg flex flex-col max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" />
-            Criar encarte com IA
-          </DialogTitle>
+          <div className="flex items-center justify-between gap-2">
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              Criar encarte com IA
+            </DialogTitle>
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              OpenAI
+            </span>
+          </div>
           <DialogDescription>
             Descreva as ofertas do seu encarte. Você pode digitar, colar uma lista ou usar o microfone.
           </DialogDescription>
