@@ -42,9 +42,9 @@ async function removeBackground(dataUrl: string): Promise<string> {
   const data = imageData.data;
 
   for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
+    const r = data[i] ?? 0;
+    const g = data[i + 1] ?? 0;
+    const b = data[i + 2] ?? 0;
     const brightness = (r + g + b) / 3;
     if (brightness > 240 && Math.abs(r - g) < 20 && Math.abs(r - b) < 20) {
       data[i + 3] = 0;

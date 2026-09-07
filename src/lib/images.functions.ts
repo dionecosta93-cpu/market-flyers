@@ -175,8 +175,8 @@ export const searchProductImages = createServerFn({ method: "POST" })
       try {
         const webCandidates = await searchProductImageOnWeb({
           name: wanted.name,
-          brand: wanted.brand || undefined,
-          size: wanted.size || undefined,
+          ...(wanted.brand ? { brand: wanted.brand } : {}),
+          ...(wanted.size ? { size: wanted.size } : {}),
         });
         console.log("[image-search] web_search candidates:", webCandidates.length);
         for (const c of webCandidates) {

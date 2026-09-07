@@ -50,7 +50,7 @@ import {
   type FlyerSettings,
   type Offer,
 } from "@/lib/flyer-types";
-import { TEMPLATES, templateById } from "@/lib/templates";
+import { TEMPLATES, templateById, type FlyerTemplate } from "@/lib/templates";
 
 export const Route = createFileRoute("/flyers/$flyerId")({
   component: FlyerEditorPage,
@@ -1421,7 +1421,7 @@ function FlyerEditorPage() {
                 setActivePageItems((items) => {
                   const next = [...items];
                   const [moved] = next.splice(fromIndex, 1);
-                  next.splice(toIndex, 0, moved);
+                  if (moved) next.splice(toIndex, 0, moved);
                   return next;
                 });
               }}
