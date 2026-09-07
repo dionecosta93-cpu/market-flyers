@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import type { ImageCandidate } from "@/lib/images.functions";
 
 type AiProviderConfig = {
   provider: "openai" | "lovable";
@@ -395,14 +396,14 @@ export const parseOffers = createServerFn({ method: "POST" })
 
     return {
       products: products.map((p: Record<string, unknown>) => ({
-        name: String(p?.name ?? "").trim() || "Produto",
-        brand: String(p?.brand ?? "").trim(),
-        size: String(p?.size ?? "").trim(),
-        price: Number(p?.price ?? 0) || 0,
-        oldPrice: p?.oldPrice == null ? null : Number(p.oldPrice) || null,
-        category: String(p?.category ?? "Outros").trim(),
-        qty: String(p?.qty ?? "").trim(),
-        confident: p?.confident !== false,
+        name: String(p?.['name'] ?? "").trim() || "Produto",
+        brand: String(p?.['brand'] ?? "").trim(),
+        size: String(p?.['size'] ?? "").trim(),
+        price: Number(p?.['price'] ?? 0) || 0,
+        oldPrice: p?.['oldPrice'] == null ? null : Number(p['oldPrice']) || null,
+        category: String(p?.['category'] ?? "Outros").trim(),
+        qty: String(p?.['qty'] ?? "").trim(),
+        confident: p?.['confident'] !== false,
       })),
     };
   });

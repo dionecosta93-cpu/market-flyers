@@ -37,6 +37,16 @@ import { FlyerCreateDialog } from "@/components/flyer-create-dialog";
 
 export const Route = createFileRoute("/flyers")({
   component: FlyersPage,
+  head: () => ({
+    meta: [
+      { title: "Meus encartes | Market Flyers" },
+      { name: "description", content: "Crie, edite e baixe seus encartes de ofertas do mercado em PNG, JPG ou PDF." },
+      { property: "og:title", content: "Meus encartes | Market Flyers" },
+      { property: "og:description", content: "Crie, edite e baixe seus encartes de ofertas do mercado em PNG, JPG ou PDF." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 const DEFAULT_TITLE = "Novo encarte";
