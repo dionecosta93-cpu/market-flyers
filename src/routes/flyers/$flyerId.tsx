@@ -1435,51 +1435,50 @@ function FlyerEditorPage() {
             : "Nenhum download até agora"}
         </p>
       </main>
+      <AlertDialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {verifying ? "Verificando encarte..." : verifyResult?.approved ? "Encarte aprovado" : "Problemas encontrados"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {verifying
+                ? "A IA está analisando seu encarte. Aguarde..."
+                : verifyResult?.approved
+                  ? "Seu encarte passou em todas as verificações de qualidade."
+                  : "Encontramos alguns pontos que podem ser melhorados:"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto space-y-2">
+            {verifying && (
+              <div className="flex items-center justify-center gap-2 py-8">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span className="text-sm text-muted-foreground">Verificando...</span>
+              </div>
+            )}
+            {!verifying && verifyResult?.issues && verifyResult.issues.length > 0 && (
+              <div className="space-y-2">
+                {verifyResult.issues.map((issue, idx) => (
+                  <div
+                    key={idx}
+                    className={`rounded-lg border p-3 text-sm ${
+                      issue.severity === "error"
+                        ? "border-destructive/40 bg-destructive/10 text-destructive"
+                        : "border-yellow-500/40 bg-yellow-500/10 text-yellow-700"
+                    }`}
+                  >
+                    <p className="font-medium">{issue.severity === "error" ? "Erro" : "Aviso"}</p>
+                    <p>{issue.message}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <Button onClick={() => setVerifyOpen(false)}>Fechar</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
-
-<AlertDialog open={verifyOpen} onOpenChange={setVerifyOpen}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>
-        {verifying ? "Verificando encarte..." : verifyResult?.approved ? "Encarte aprovado" : "Problemas encontrados"}
-      </AlertDialogTitle>
-      <AlertDialogDescription>
-        {verifying
-          ? "A IA está analisando seu encarte. Aguarde..."
-          : verifyResult?.approved
-            ? "Seu encarte passou em todas as verificações de qualidade."
-            : "Encontramos alguns pontos que podem ser melhorados:"}
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <div className="max-h-[60vh] overflow-y-auto space-y-2">
-      {verifying && (
-        <div className="flex items-center justify-center gap-2 py-8">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm text-muted-foreground">Verificando...</span>
-        </div>
-      )}
-      {!verifying && verifyResult?.issues && verifyResult.issues.length > 0 && (
-        <div className="space-y-2">
-          {verifyResult.issues.map((issue, idx) => (
-            <div
-              key={idx}
-              className={`rounded-lg border p-3 text-sm ${
-                issue.severity === "error"
-                  ? "border-destructive/40 bg-destructive/10 text-destructive"
-                  : "border-yellow-500/40 bg-yellow-500/10 text-yellow-700"
-              }`}
-            >
-              <p className="font-medium">{issue.severity === "error" ? "Erro" : "Aviso"}</p>
-              <p>{issue.message}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-    <AlertDialogFooter>
-      <Button onClick={() => setVerifyOpen(false)}>Fechar</Button>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
