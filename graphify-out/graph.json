@@ -169,7 +169,7 @@
       "file_type": "code",
       "norm_label": "aiproviderconfig",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L5"
+      "source_location": "L6"
     },
     {
       "id": "src_lib_images_functions_imagecandidate",
@@ -517,7 +517,7 @@
       "file_type": "code",
       "norm_label": "compositetypes",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L406"
+      "source_location": "L417"
     },
     {
       "id": "src_integrations_supabase_types_database",
@@ -529,7 +529,7 @@
       "file_type": "code",
       "norm_label": "database",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L3"
+      "source_location": "L9"
     },
     {
       "id": "src_integrations_supabase_types_databasewithoutinternals",
@@ -541,7 +541,7 @@
       "file_type": "code",
       "norm_label": "databasewithoutinternals",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L311"
+      "source_location": "L317"
     },
     {
       "id": "src_integrations_supabase_types_defaultschema",
@@ -553,7 +553,7 @@
       "file_type": "code",
       "norm_label": "defaultschema",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L313"
+      "source_location": "L319"
     },
     {
       "id": "src_integrations_supabase_types_enums",
@@ -565,7 +565,7 @@
       "file_type": "code",
       "norm_label": "enums",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L390"
+      "source_location": "L400"
     },
     {
       "id": "src_integrations_supabase_types_json",
@@ -589,7 +589,7 @@
       "file_type": "code",
       "norm_label": "tables",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L315"
+      "source_location": "L321"
     },
     {
       "id": "src_integrations_supabase_types_tablesinsert",
@@ -601,7 +601,7 @@
       "file_type": "code",
       "norm_label": "tablesinsert",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L342"
+      "source_location": "L350"
     },
     {
       "id": "src_integrations_supabase_types_tablesupdate",
@@ -613,7 +613,7 @@
       "file_type": "code",
       "norm_label": "tablesupdate",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L366"
+      "source_location": "L375"
     },
     {
       "id": "src_components_ui_button_buttonprops",
@@ -769,7 +769,7 @@
       "file_type": "code",
       "norm_label": "pagecanvas()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L72"
+      "source_location": "L82"
     },
     {
       "id": "src_routes_flyers_flyerid_productcard",
@@ -780,7 +780,7 @@
       "file_type": "code",
       "norm_label": "productcard()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L226"
+      "source_location": "L236"
     },
     {
       "id": "src_routes_flyers_flyerspage",
@@ -791,7 +791,7 @@
       "file_type": "code",
       "norm_label": "flyerspage()",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L103"
+      "source_location": "L113"
     },
     {
       "id": "src_routes_flyers_flyerspage_handlecreated",
@@ -802,7 +802,7 @@
       "file_type": "code",
       "norm_label": "handlecreated()",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L144"
+      "source_location": "L154"
     },
     {
       "id": "src_routes_flyers_flyerspage_handledeleteall",
@@ -813,7 +813,7 @@
       "file_type": "code",
       "norm_label": "handledeleteall()",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L132"
+      "source_location": "L142"
     },
     {
       "id": "src_routes_flyers_flyerspage_handlelogout",
@@ -824,7 +824,7 @@
       "file_type": "code",
       "norm_label": "handlelogout()",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L149"
+      "source_location": "L159"
     },
     {
       "id": "src_routes_flyers_flyerthumb",
@@ -835,7 +835,7 @@
       "file_type": "code",
       "norm_label": "flyerthumb()",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L44"
+      "source_location": "L54"
     },
     {
       "id": "src_routes_loja_storepage",
@@ -1110,7 +1110,7 @@
       "file_type": "code",
       "norm_label": "callaudiotranscription()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L205"
+      "source_location": "L206"
     },
     {
       "id": "src_lib_ai_functions_callchat",
@@ -1121,7 +1121,7 @@
       "file_type": "code",
       "norm_label": "callchat()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L73"
+      "source_location": "L74"
     },
     {
       "id": "src_lib_ai_functions_callimagegeneration",
@@ -1132,7 +1132,7 @@
       "file_type": "code",
       "norm_label": "callimagegeneration()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L280"
+      "source_location": "L281"
     },
     {
       "id": "src_lib_ai_functions_extractjson",
@@ -1143,7 +1143,7 @@
       "file_type": "code",
       "norm_label": "extractjson()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L48"
+      "source_location": "L49"
     },
     {
       "id": "src_lib_ai_functions_firsttext",
@@ -1154,7 +1154,7 @@
       "file_type": "code",
       "norm_label": "firsttext()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L43"
+      "source_location": "L44"
     },
     {
       "id": "src_lib_ai_functions_getaiconfig",
@@ -1165,7 +1165,7 @@
       "file_type": "code",
       "norm_label": "getaiconfig()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "src_lib_ai_functions_logusage",
@@ -1176,7 +1176,7 @@
       "file_type": "code",
       "norm_label": "logusage()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L63"
+      "source_location": "L64"
     },
     {
       "id": "src_lib_ai_functions_searchproductimageonweb",
@@ -1187,7 +1187,7 @@
       "file_type": "code",
       "norm_label": "searchproductimageonweb()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L135"
+      "source_location": "L136"
     },
     {
       "id": "src_lib_ai_functions_validateproductimage",
@@ -1198,7 +1198,7 @@
       "file_type": "code",
       "norm_label": "validateproductimage()",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L566"
+      "source_location": "L567"
     },
     {
       "id": "src_lib_flyer_types_newid",
@@ -1286,7 +1286,7 @@
       "file_type": "code",
       "norm_label": "flyereditorpage()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L328"
+      "source_location": "L338"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_addoffer",
@@ -1297,7 +1297,7 @@
       "file_type": "code",
       "norm_label": "addoffer()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L491"
+      "source_location": "L501"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_deleteoffer",
@@ -1308,7 +1308,7 @@
       "file_type": "code",
       "norm_label": "deleteoffer()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L506"
+      "source_location": "L516"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_exportjpg",
@@ -1319,7 +1319,7 @@
       "file_type": "code",
       "norm_label": "exportjpg()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L671"
+      "source_location": "L681"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_exportpdf",
@@ -1330,7 +1330,7 @@
       "file_type": "code",
       "norm_label": "exportpdf()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L706"
+      "source_location": "L716"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_exportpng",
@@ -1341,7 +1341,7 @@
       "file_type": "code",
       "norm_label": "exportpng()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L648"
+      "source_location": "L658"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handleaddimported",
@@ -1352,7 +1352,7 @@
       "file_type": "code",
       "norm_label": "handleaddimported()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L528"
+      "source_location": "L538"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handlefixwithai",
@@ -1363,7 +1363,7 @@
       "file_type": "code",
       "norm_label": "handlefixwithai()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L596"
+      "source_location": "L606"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handleimagegenerated",
@@ -1374,7 +1374,7 @@
       "file_type": "code",
       "norm_label": "handleimagegenerated()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L536"
+      "source_location": "L546"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handleorganize",
@@ -1385,7 +1385,7 @@
       "file_type": "code",
       "norm_label": "handleorganize()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L544"
+      "source_location": "L554"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handlereplacepage",
@@ -1396,7 +1396,7 @@
       "file_type": "code",
       "norm_label": "handlereplacepage()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L532"
+      "source_location": "L542"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_handleverify",
@@ -1407,7 +1407,7 @@
       "file_type": "code",
       "norm_label": "handleverify()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L357"
+      "source_location": "L367"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_nextpage",
@@ -1418,7 +1418,7 @@
       "file_type": "code",
       "norm_label": "nextpage()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L518"
+      "source_location": "L528"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_persistnow",
@@ -1429,7 +1429,7 @@
       "file_type": "code",
       "norm_label": "persistnow()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L447"
+      "source_location": "L457"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_prevpage",
@@ -1440,7 +1440,7 @@
       "file_type": "code",
       "norm_label": "prevpage()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L523"
+      "source_location": "L533"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_setactivepageitems",
@@ -1451,7 +1451,7 @@
       "file_type": "code",
       "norm_label": "setactivepageitems()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L483"
+      "source_location": "L493"
     },
     {
       "id": "src_routes_flyers_flyerid_flyereditorpage_updateoffer",
@@ -1462,7 +1462,7 @@
       "file_type": "code",
       "norm_label": "updateoffer()",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L502"
+      "source_location": "L512"
     },
     {
       "id": "src_lib_error_capture_consumelastcapturederror",
@@ -2670,7 +2670,7 @@
       "file_type": "code",
       "norm_label": "default_settings",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L59"
+      "source_location": "L69"
     },
     {
       "id": "src_routes_loja",
@@ -2750,7 +2750,7 @@
       "file_type": "code",
       "norm_label": "correctoffers",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L411"
+      "source_location": "L412"
     },
     {
       "id": "src_lib_ai_functions_generateproductimage",
@@ -2760,7 +2760,7 @@
       "file_type": "code",
       "norm_label": "generateproductimage",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L536"
+      "source_location": "L537"
     },
     {
       "id": "src_lib_ai_functions_organizeflyer",
@@ -2770,7 +2770,7 @@
       "file_type": "code",
       "norm_label": "organizeflyer",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L439"
+      "source_location": "L440"
     },
     {
       "id": "src_lib_ai_functions_parseoffers",
@@ -2780,7 +2780,7 @@
       "file_type": "code",
       "norm_label": "parseoffers",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L378"
+      "source_location": "L379"
     },
     {
       "id": "src_lib_ai_functions_transcribeoffers",
@@ -2790,7 +2790,7 @@
       "file_type": "code",
       "norm_label": "transcribeoffers",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L352"
+      "source_location": "L353"
     },
     {
       "id": "src_lib_ai_functions_verifyflyer",
@@ -2800,7 +2800,7 @@
       "file_type": "code",
       "norm_label": "verifyflyer",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L489"
+      "source_location": "L490"
     },
     {
       "id": "src_lib_images_functions",
@@ -6210,7 +6210,7 @@
       "file_type": "code",
       "norm_label": "constants",
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L422"
+      "source_location": "L434"
     },
     {
       "id": "src_lib_account_functions",
@@ -10091,7 +10091,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L206",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -10103,7 +10103,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L275",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -10115,7 +10115,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L131",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -10127,7 +10127,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "weight": 1.0
     },
     {
@@ -10139,7 +10139,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L281",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -10151,7 +10151,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L417",
+      "source_location": "L418",
       "weight": 1.0
     },
     {
@@ -10163,7 +10163,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L433",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -10175,7 +10175,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L434",
+      "source_location": "L435",
       "weight": 1.0
     },
     {
@@ -10187,7 +10187,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L560",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -10199,7 +10199,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L561",
+      "source_location": "L562",
       "weight": 1.0
     },
     {
@@ -10211,24 +10211,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L445",
+      "source_location": "L446",
       "weight": 1.0
     },
     {
       "source": "src_lib_ai_functions_organizeflyer",
       "target": "src_lib_ai_functions_extractjson",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L476",
-      "weight": 1.0
-    },
-    {
-      "source": "src_lib_ai_functions_organizeflyer",
-      "target": "src_lib_ai_functions_logusage",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -10239,6 +10227,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_lib_ai_functions_organizeflyer",
+      "target": "src_lib_ai_functions_logusage",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/lib/ai.functions.ts",
+      "source_location": "L478",
+      "weight": 1.0
+    },
+    {
       "source": "src_lib_ai_functions_parseoffers",
       "target": "src_lib_ai_functions_callchat",
       "relation": "calls",
@@ -10247,7 +10247,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L384",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -10259,7 +10259,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L392",
+      "source_location": "L393",
       "weight": 1.0
     },
     {
@@ -10271,7 +10271,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L394",
+      "source_location": "L395",
       "weight": 1.0
     },
     {
@@ -10283,7 +10283,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -10295,7 +10295,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -10307,7 +10307,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L358",
+      "source_location": "L359",
       "weight": 1.0
     },
     {
@@ -10319,7 +10319,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L359",
+      "source_location": "L360",
       "weight": 1.0
     },
     {
@@ -10331,7 +10331,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L572",
+      "source_location": "L573",
       "weight": 1.0
     },
     {
@@ -10343,7 +10343,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L499",
+      "source_location": "L500",
       "weight": 1.0
     },
     {
@@ -10355,7 +10355,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L526",
+      "source_location": "L527",
       "weight": 1.0
     },
     {
@@ -10367,7 +10367,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L527",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -10492,6 +10492,18 @@
     },
     {
       "source": "src_routes_flyers_flyerid_flyereditorpage",
+      "target": "src_lib_flyer_types_brl",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/routes/flyers/$flyerId.tsx",
+      "source_location": "L1001",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_flyers_flyerid_flyereditorpage",
       "target": "src_components_auth_view_useauthsession",
       "relation": "calls",
       "_origin": "ast",
@@ -10499,7 +10511,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L331",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -10511,7 +10523,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L364",
+      "source_location": "L374",
       "weight": 1.0
     },
     {
@@ -10523,7 +10535,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L420",
+      "source_location": "L430",
       "weight": 1.0
     },
     {
@@ -10535,7 +10547,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L476",
+      "source_location": "L486",
       "weight": 1.0
     },
     {
@@ -10547,7 +10559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L477",
+      "source_location": "L487",
       "weight": 1.0
     },
     {
@@ -10559,19 +10571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L550",
-      "weight": 1.0
-    },
-    {
-      "source": "src_routes_flyers_flyerid_flyereditorpage",
-      "target": "src_lib_flyer_types_brl",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L991",
+      "source_location": "L560",
       "weight": 1.0
     },
     {
@@ -10583,7 +10583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L493",
+      "source_location": "L503",
       "weight": 1.0
     },
     {
@@ -10595,7 +10595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L498",
+      "source_location": "L508",
       "weight": 1.0
     },
     {
@@ -10607,7 +10607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L513",
+      "source_location": "L523",
       "weight": 1.0
     },
     {
@@ -10619,7 +10619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L661",
+      "source_location": "L671",
       "weight": 1.0
     },
     {
@@ -10631,7 +10631,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L529",
+      "source_location": "L539",
       "weight": 1.0
     },
     {
@@ -10643,7 +10643,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L602",
+      "source_location": "L612",
       "weight": 1.0
     },
     {
@@ -10655,7 +10655,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L629",
+      "source_location": "L639",
       "weight": 1.0
     },
     {
@@ -10667,7 +10667,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L538",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -10679,7 +10679,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L550",
+      "source_location": "L560",
       "weight": 1.0
     },
     {
@@ -10691,7 +10691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L577",
+      "source_location": "L587",
       "weight": 1.0
     },
     {
@@ -10703,7 +10703,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L364",
+      "source_location": "L374",
       "weight": 1.0
     },
     {
@@ -10715,7 +10715,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L503",
+      "source_location": "L513",
       "weight": 1.0
     },
     {
@@ -10727,7 +10727,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L85",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -10739,7 +10739,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L309",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -10751,7 +10751,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L106",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -10763,7 +10763,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L293",
+      "source_location": "L303",
       "weight": 1.0
     },
     {
@@ -10775,7 +10775,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L45",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -10787,7 +10787,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L86",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -10979,7 +10979,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L447",
+      "source_location": "L457",
       "weight": 1.0
     },
     {
@@ -10991,7 +10991,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L483",
+      "source_location": "L493",
       "weight": 1.0
     },
     {
@@ -11003,7 +11003,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L502",
+      "source_location": "L512",
       "weight": 1.0
     },
     {
@@ -11015,7 +11015,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L506",
+      "source_location": "L516",
       "weight": 1.0
     },
     {
@@ -11027,7 +11027,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L518",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -11039,7 +11039,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L523",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -11173,7 +11173,7 @@
       "context": "import",
       "deferred": true,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L65",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -11186,7 +11186,7 @@
       "context": "import",
       "deferred": true,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L711",
+      "source_location": "L721",
       "weight": 1.0
     },
     {
@@ -13506,6 +13506,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_lib_ai_functions",
+      "target": "src_lib_images_functions_imagecandidate",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/lib/ai.functions.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
       "source": "src_lib_images_functions",
       "target": "src_integrations_supabase_auth_middleware_requiresupabaseauth",
       "relation": "imports",
@@ -14103,6 +14115,18 @@
       "context": "import",
       "source_file": "src/routes/flyers/$flyerId.tsx",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_routes_flyers_flyerid",
+      "target": "src_lib_templates_flyertemplate",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/routes/flyers/$flyerId.tsx",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -17159,6 +17183,19 @@
       "weight": 1.0
     },
     {
+      "source": "src_lib_ai_functions",
+      "target": "src_lib_images_functions",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/lib/ai.functions.ts",
+      "source_location": "L4",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
       "source": "src_lib_images_functions",
       "target": "ref_tanstack_react_start",
       "relation": "imports_from",
@@ -17192,18 +17229,6 @@
       "context": "import",
       "source_file": "src/lib/images.functions.ts",
       "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "src_lib_images_functions",
-      "target": "src_lib_ai_functions",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/lib/images.functions.ts",
-      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -22183,24 +22208,13 @@
     },
     {
       "source": "src_integrations_supabase_types",
-      "target": "src_integrations_supabase_types_database",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "src_integrations_supabase_types",
       "target": "src_integrations_supabase_types_databasewithoutinternals",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L311",
+      "source_location": "L317",
       "weight": 1.0
     },
     {
@@ -22211,7 +22225,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L313",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -22222,7 +22236,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L315",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -22233,7 +22247,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L342",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -22244,7 +22258,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L366",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -22255,7 +22269,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L390",
+      "source_location": "L400",
       "weight": 1.0
     },
     {
@@ -22266,7 +22280,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L406",
+      "source_location": "L417",
       "weight": 1.0
     },
     {
@@ -22277,7 +22291,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/integrations/supabase/types.ts",
-      "source_location": "L422",
+      "source_location": "L434",
+      "weight": 1.0
+    },
+    {
+      "source": "src_integrations_supabase_types",
+      "target": "src_integrations_supabase_types_database",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/integrations/supabase/types.ts",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -22304,24 +22329,24 @@
     },
     {
       "source": "src_lib_ai_functions",
-      "target": "src_lib_ai_functions_getaiconfig",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "src_lib_ai_functions",
       "target": "src_lib_ai_functions_searchproductimageonweb",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L135",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_ai_functions",
+      "target": "src_lib_ai_functions_getaiconfig",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/ai.functions.ts",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -22332,7 +22357,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L205",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -22343,7 +22368,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L280",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -22354,7 +22379,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L352",
+      "source_location": "L353",
       "weight": 1.0
     },
     {
@@ -22365,7 +22390,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L378",
+      "source_location": "L379",
       "weight": 1.0
     },
     {
@@ -22376,7 +22401,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L411",
+      "source_location": "L412",
       "weight": 1.0
     },
     {
@@ -22387,7 +22412,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -22398,7 +22423,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L439",
+      "source_location": "L440",
       "weight": 1.0
     },
     {
@@ -22409,7 +22434,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -22420,18 +22445,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L489",
-      "weight": 1.0
-    },
-    {
-      "source": "src_lib_ai_functions",
-      "target": "src_lib_ai_functions_aiproviderconfig",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L5",
+      "source_location": "L490",
       "weight": 1.0
     },
     {
@@ -22442,7 +22456,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L536",
+      "source_location": "L537",
       "weight": 1.0
     },
     {
@@ -22453,7 +22467,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L566",
+      "source_location": "L567",
+      "weight": 1.0
+    },
+    {
+      "source": "src_lib_ai_functions",
+      "target": "src_lib_ai_functions_aiproviderconfig",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/ai.functions.ts",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -22464,7 +22489,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -22475,7 +22500,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/ai.functions.ts",
-      "source_location": "L73",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -22959,7 +22984,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L44",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -22970,7 +22995,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L226",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -22992,7 +23017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L59",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -23003,7 +23028,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L72",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -23014,7 +23039,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L357",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -23025,7 +23050,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L491",
+      "source_location": "L501",
       "weight": 1.0
     },
     {
@@ -23036,7 +23061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L528",
+      "source_location": "L538",
       "weight": 1.0
     },
     {
@@ -23047,7 +23072,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L532",
+      "source_location": "L542",
       "weight": 1.0
     },
     {
@@ -23058,7 +23083,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L536",
+      "source_location": "L546",
       "weight": 1.0
     },
     {
@@ -23069,7 +23094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L544",
+      "source_location": "L554",
       "weight": 1.0
     },
     {
@@ -23080,7 +23105,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L596",
+      "source_location": "L606",
       "weight": 1.0
     },
     {
@@ -23091,7 +23116,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L648",
+      "source_location": "L658",
       "weight": 1.0
     },
     {
@@ -23102,7 +23127,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L671",
+      "source_location": "L681",
       "weight": 1.0
     },
     {
@@ -23113,7 +23138,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers/$flyerId.tsx",
-      "source_location": "L706",
+      "source_location": "L716",
       "weight": 1.0
     },
     {
@@ -23124,7 +23149,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L132",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -23135,7 +23160,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L144",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -23146,7 +23171,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/routes/flyers.tsx",
-      "source_location": "L149",
+      "source_location": "L159",
       "weight": 1.0
     },
     {
@@ -23876,5 +23901,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "28108b957f65d057b315195aa51fec0e3315ec23"
+  "built_at_commit": "dd4a6b8d7543dbfa5b66eddb23abeb9807c5b225"
 }
