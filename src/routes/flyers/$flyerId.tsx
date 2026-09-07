@@ -54,6 +54,16 @@ import { TEMPLATES, templateById, type FlyerTemplate } from "@/lib/templates";
 
 export const Route = createFileRoute("/flyers/$flyerId")({
   component: FlyerEditorPage,
+  head: () => ({
+    meta: [
+      { title: "Editor de encarte | Market Flyers" },
+      { name: "description", content: "Ajuste produtos, preços, imagens e modelo do seu encarte e baixe sem marca d'água." },
+      { property: "og:title", content: "Editor de encarte | Market Flyers" },
+      { property: "og:description", content: "Ajuste produtos, preços, imagens e modelo do seu encarte e baixe sem marca d'água." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 const DEFAULT_SETTINGS: FlyerSettings = {
