@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ImagePlus, Loader2, Save, Store, Trash2 } from "lucide-react";
+import { ChevronLeft, ImagePlus, Loader2, Save, Sparkles, Store, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AuthView, useAuthSession } from "@/components/auth-view";
+import { generateStoreLogo } from "@/lib/ai.functions";
 import {
   EMPTY_STORE_PROFILE,
   fetchStoreProfile,
