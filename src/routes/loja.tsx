@@ -199,6 +199,20 @@ function StorePage() {
                       <ImagePlus className="w-4 h-4" />
                       {profile.logo_url ? "Trocar logo" : "Enviar logo"}
                     </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={handleCreateLogo}
+                      disabled={creatingLogo}
+                    >
+                      {creatingLogo ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-4 h-4" />
+                      )}
+                      Criar logo com IA
+                    </Button>
                     {profile.logo_url && (
                       <Button
                         type="button"
