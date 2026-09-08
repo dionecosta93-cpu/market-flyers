@@ -16,6 +16,7 @@ export type ImageCandidate = {
 };
 
 const OFF_ENDPOINT = "https://world.openfoodfacts.org/cgi/search.pl";
+const OFF_BR_ENDPOINT = "https://br.openfoodfacts.org/cgi/search.pl";
 
 function norm(value: string) {
   return value
@@ -37,6 +38,7 @@ function tokens(value: string) {
 function scoreCandidate(
   wanted: { name: string; brand: string; size: string },
   found: { name: string; brand: string; size: string },
+  isBrazilian = false,
 ) {
   let score = 0;
   const wantedName = tokens(wanted.name);
@@ -56,7 +58,85 @@ function scoreCandidate(
     if (digits && foundDigits && foundDigits.includes(digits)) score += 4;
     else if (digits && norm(found.name).includes(digits)) score += 2;
   }
+  // Produtos brasileiros recebem bônus de pontuação
+  if (isBrazilian) score += 10;
   return score;
+}
+
+/** Busca no Open Food Facts Brasil (br.openfoodfacts.org) — produtos vendidos no Brasil */
+async function searchOpenFoodFactsBrasil(
+  query: string,
+  wanted: { name: string; brand: string; size: string },
+) {
+  const url = `${OFF_BR_ENDPOINT}?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=16&fields=product_name,product_name_pt,brands,quantity,image_front_url,code`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "MarketFlyers/1.0 (encartes de supermercado)" },
+    });
+    if (!res.ok) return [] as ImageCandidate[];
+    const json = (await res.json()) as { products?: Array<Record<string, unknown>> };
+    const products = Array.isArray(json.products) ? json.products : [];
+    const candidates: ImageCandidate[] = [];
+    for (const p of products) {
+      const image = typeof p["image_front_url"] === "string" ? (p["image_front_url"] as string) : "";
+      if (!image) continue;
+      const name = String(p["product_name_pt"] || p["product_name"] || "").trim();
+      const brand = String(p["brands"] || "").trim();
+      const size = String(p["quantity"] || "").trim();
+      if (!name) continue;
+      const code = String(p["code"] || "");
+      candidates.push({
+        url: image,
+        title: [name, brand, size].filter(Boolean).join(" · "),
+        source: "Open Food Facts Brasil",
+        sourceUrl: code
+          ? `https://br.openfoodfacts.org/produto/${code}`
+          : "https://br.openfoodfacts.org",
+        score: scoreCandidate(wanted, { name, brand, size }, true),
+      });
+    }
+    return candidates;
+  } catch {
+    return [] as ImageCandidate[];
+  }
+}
+
+/** Busca no Open Food Facts mundial com filtro de país Brasil */
+async function searchOpenFoodFactsWorldBR(
+  query: string,
+  wanted: { name: string; brand: string; size: string },
+) {
+  const url = `${OFF_ENDPOINT}?search_terms=${encodeURIComponent(query)}&tagtype_0=countries&tag_contains_0=contains&tag_0=brazil&search_simple=1&action=process&json=1&page_size=16&fields=product_name,product_name_pt,brands,quantity,image_front_url,code`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "MarketFlyers/1.0 (encartes de supermercado)" },
+    });
+    if (!res.ok) return [] as ImageCandidate[];
+    const json = (await res.json()) as { products?: Array<Record<string, unknown>> };
+    const products = Array.isArray(json.products) ? json.products : [];
+    const candidates: ImageCandidate[] = [];
+    for (const p of products) {
+      const image = typeof p["image_front_url"] === "string" ? (p["image_front_url"] as string) : "";
+      if (!image) continue;
+      const name = String(p["product_name_pt"] || p["product_name"] || "").trim();
+      const brand = String(p["brands"] || "").trim();
+      const size = String(p["quantity"] || "").trim();
+      if (!name) continue;
+      const code = String(p["code"] || "");
+      candidates.push({
+        url: image,
+        title: [name, brand, size].filter(Boolean).join(" · "),
+        source: "Open Food Facts (BR)",
+        sourceUrl: code
+          ? `https://world.openfoodfacts.org/product/${code}`
+          : "https://world.openfoodfacts.org",
+        score: scoreCandidate(wanted, { name, brand, size }, true),
+      });
+    }
+    return candidates;
+  } catch {
+    return [] as ImageCandidate[];
+  }
 }
 
 async function searchOpenFoodFacts(
@@ -141,7 +221,7 @@ export const searchProductImages = createServerFn({ method: "POST" })
       console.error("[image-search] library lookup failed", error);
     }
 
-    // 2. Base pública de produtos — busca específica (nome + marca + peso)
+    // 2. Base pública de produtos — prioriza produtos brasileiros
     const queries = [
       [data.brand, data.name, data.size].filter(Boolean).join(" "),
       [data.brand, data.name].filter(Boolean).join(" "),
@@ -149,16 +229,46 @@ export const searchProductImages = createServerFn({ method: "POST" })
     ].filter((q, i, arr) => q && arr.indexOf(q) === i);
 
     let publicCandidates: ImageCandidate[] = [];
+
+    // 2a. Primeiro tenta o Open Food Facts Brasil (br.openfoodfacts.org)
     for (const query of queries) {
       try {
-        const found = await searchOpenFoodFacts(query, wanted);
+        const found = await searchOpenFoodFactsBrasil(query, wanted);
         publicCandidates.push(...found);
       } catch (error) {
-        console.error("[image-search] openfoodfacts failed", error);
+        console.error("[image-search] openfoodfacts-brasil failed", error);
       }
-      if (publicCandidates.length >= 8) break;
+      if (publicCandidates.length >= 6) break;
     }
-    console.log("[image-search] openfoodfacts candidates:", publicCandidates.length);
+    console.log("[image-search] OFF Brasil candidates:", publicCandidates.length);
+
+    // 2b. Se não encontrou suficiente, tenta Open Food Facts mundial com filtro Brasil
+    if (publicCandidates.length < 4) {
+      for (const query of queries) {
+        try {
+          const found = await searchOpenFoodFactsWorldBR(query, wanted);
+          publicCandidates.push(...found);
+        } catch (error) {
+          console.error("[image-search] openfoodfacts-world-br failed", error);
+        }
+        if (publicCandidates.length >= 8) break;
+      }
+      console.log("[image-search] OFF World-BR candidates:", publicCandidates.length);
+    }
+
+    // 2c. Fallback: Open Food Facts mundial sem filtro de país
+    if (publicCandidates.length < 3) {
+      for (const query of queries) {
+        try {
+          const found = await searchOpenFoodFacts(query, wanted);
+          publicCandidates.push(...found);
+        } catch (error) {
+          console.error("[image-search] openfoodfacts failed", error);
+        }
+        if (publicCandidates.length >= 8) break;
+      }
+      console.log("[image-search] OFF global candidates:", publicCandidates.length);
+    }
 
     const seen = new Set<string>();
     const uniquePublic: ImageCandidate[] = [];
@@ -169,6 +279,7 @@ export const searchProductImages = createServerFn({ method: "POST" })
       }
     }
     console.log("[image-search] unique public candidates:", uniquePublic.length);
+
 
     // 3. Fallback: busca real na internet via OpenAI Responses API + web_search
     if (uniquePublic.length < 3 && wanted.name) {

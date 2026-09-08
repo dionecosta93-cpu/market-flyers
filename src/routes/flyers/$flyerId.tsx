@@ -83,7 +83,6 @@ function PageCanvas({
   page,
   settings,
   templateId,
-  layoutMode = "grade",
   onReorder,
 }: {
   page: FlyerPage;
@@ -92,110 +91,93 @@ function PageCanvas({
   layoutMode?: "grade" | "destaque" | "misto";
   onReorder?: (fromIndex: number, toIndex: number) => void;
 }) {
-  const tpl = templateById(templateId || "tradicional");
+  const tpl = templateById(templateId || "oferta-forte");
   const scale = settings.fontScale || 1;
   const items = page?.items || [];
-  const highlighted = items.filter((i) => i.highlight);
-  const normal = items.filter((i) => !i.highlight);
   const [dragId, setDragId] = useState<string | null>(null);
+
+  // Grid adaptativo: colunas baseadas na quantidade de produtos
+  const cols = items.length <= 2 ? 1 : items.length <= 4 ? 2 : items.length <= 9 ? 3 : 4;
+
+  const gridStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+    gap: `${Math.round(10 * scale)}px`,
+  };
 
   return (
     <div
       className="w-full h-full flex flex-col"
-      style={{ backgroundColor: tpl.bg, fontSize: `${12 * scale}px` }}
+      style={{ backgroundColor: tpl.bg, fontSize: `${12 * scale}px`, fontFamily: tpl.headingFont }}
     >
+      {/* HEADER — logo/nome do mercado + título da promoção */}
       <div
-        className="px-5 py-4 text-center shrink-0"
-        style={{ backgroundColor: tpl.header, color: tpl.headerText }}
+        className="shrink-0 flex flex-col items-center justify-center"
+        style={{
+          backgroundColor: tpl.header,
+          color: tpl.headerText,
+          padding: `${Math.round(14 * scale)}px ${Math.round(16 * scale)}px`,
+        }}
       >
+        {settings.storeName && (
+          <p
+            className="font-black tracking-widest uppercase leading-none"
+            style={{
+              fontFamily: tpl.headingFont,
+              fontSize: `${Math.round(13 * scale)}px`,
+              opacity: 0.85,
+              letterSpacing: "0.12em",
+            }}
+          >
+            {settings.storeName}
+          </p>
+        )}
         <h1
-          className="text-[26px] leading-tight font-black tracking-tight"
+          className="font-black tracking-tight leading-none text-center"
           style={{
             fontFamily: tpl.headingFont,
-            fontSize: `${Math.round(26 * scale)}px`,
+            fontSize: `${Math.round(28 * scale)}px`,
+            lineHeight: 1.05,
+            textTransform: "uppercase",
           }}
         >
           {settings.headline || "ENCARTE DE OFERTAS"}
         </h1>
-        {settings.subheadline && (
-          <p className="text-[13px] opacity-90 mt-1" style={{ fontSize: `${Math.round(13 * scale)}px` }}>
-            {settings.subheadline}
-          </p>
+        {settings.validity && (
+          <div
+            className="mt-1 px-3 py-0.5 rounded-full font-bold"
+            style={{
+              backgroundColor: tpl.price,
+              color: tpl.priceText,
+              fontSize: `${Math.round(10 * scale)}px`,
+              letterSpacing: "0.05em",
+            }}
+          >
+            {settings.validity}
+          </div>
         )}
       </div>
 
-      <div className="flex-1 p-4 overflow-hidden">
+      {/* ÁREA DE PRODUTOS */}
+      <div
+        className="flex-1 overflow-hidden"
+        style={{ padding: `${Math.round(10 * scale)}px` }}
+      >
         {items.length === 0 ? (
           <div className="h-full flex items-center justify-center">
-            <p className="text-sm" style={{ color: tpl.headerText }}>
+            <p className="text-sm font-medium opacity-60" style={{ color: tpl.headerText }}>
               Adicione ofertas para começar
             </p>
           </div>
-        ) : layoutMode === "destaque" && highlighted.length > 0 && normal.length > 0 ? (
-          <div className="h-full flex flex-col gap-3 content-start overflow-y-auto">
-            <div
-              className="rounded-2xl p-4 flex flex-col"
-              style={{
-                backgroundColor: tpl.card,
-                borderColor: tpl.cardBorder,
-                color: tpl.cardText,
-                borderRadius: tpl.radius,
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-              }}
-            >
-              {highlighted.map((offer) => (
-                <ProductCard
-                  key={offer.id}
-                  offer={offer}
-                  template={tpl}
-                  scale={scale}
-                  prominent
-                  draggable
-                  onDragStart={setDragId}
-                  onDragEnd={() => setDragId(null)}
-                  onDrop={(id) => {
-                    const fromIdx = items.findIndex((i) => i.id === dragId);
-                    const toIdx = items.findIndex((i) => i.id === id);
-                    if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
-                      onReorder?.(fromIdx, toIdx);
-                    }
-                    setDragId(null);
-                  }}
-                />
-              ))}
-            </div>
-            <div className="grid grid-cols-2 gap-3 content-start">
-              {normal.map((offer) => (
-                <ProductCard
-                  key={offer.id}
-                  offer={offer}
-                  template={tpl}
-                  scale={scale}
-                  draggable
-                  onDragStart={setDragId}
-                  onDragEnd={() => setDragId(null)}
-                  onDrop={(id) => {
-                    const fromIdx = items.findIndex((i) => i.id === dragId);
-                    const toIdx = items.findIndex((i) => i.id === id);
-                    if (fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx) {
-                      onReorder?.(fromIdx, toIdx);
-                    }
-                    setDragId(null);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
         ) : (
-          <div className="h-full grid grid-cols-2 gap-3 content-start">
-            {items.map((offer) => (
+          <div style={gridStyle}>
+            {items.map((offer, idx) => (
               <ProductCard
                 key={offer.id}
                 offer={offer}
                 template={tpl}
                 scale={scale}
+                index={idx + 1}
                 prominent={!!offer.highlight}
                 draggable
                 onDragStart={setDragId}
@@ -214,17 +196,39 @@ function PageCanvas({
         )}
       </div>
 
+      {/* FOOTER — rodapé com contato e redes sociais */}
       {settings.showFooter !== false && (
         <div
-          className="px-4 py-3 text-center shrink-0"
-          style={{ backgroundColor: tpl.accent, color: tpl.accentText }}
+          className="shrink-0 flex items-center justify-center gap-3 flex-wrap"
+          style={{
+            backgroundColor: tpl.accent,
+            color: tpl.accentText,
+            padding: `${Math.round(8 * scale)}px ${Math.round(12 * scale)}px`,
+          }}
         >
-          <p className="font-bold" style={{ fontSize: `${Math.round(11 * scale)}px` }}>
-            {settings.storeName || "Sua loja aqui"}
-          </p>
-          {settings.validity && (
-            <p className="opacity-90" style={{ fontSize: `${Math.round(10 * scale)}px` }}>
-              {settings.validity}
+          {settings.whatsapp && (
+            <span className="font-bold flex items-center gap-1" style={{ fontSize: `${Math.round(10 * scale)}px` }}>
+              <span style={{ fontSize: `${Math.round(11 * scale)}px` }}>📱</span> {settings.whatsapp}
+            </span>
+          )}
+          {settings.phone && !settings.whatsapp && (
+            <span className="font-bold" style={{ fontSize: `${Math.round(10 * scale)}px` }}>
+              📞 {settings.phone}
+            </span>
+          )}
+          {settings.address && (
+            <span className="opacity-90" style={{ fontSize: `${Math.round(9 * scale)}px` }}>
+              📍 {settings.address}
+            </span>
+          )}
+          {settings.instagram && (
+            <span className="font-semibold" style={{ fontSize: `${Math.round(9 * scale)}px` }}>
+              @{settings.instagram}
+            </span>
+          )}
+          {!settings.whatsapp && !settings.phone && !settings.address && !settings.instagram && (
+            <p className="font-bold" style={{ fontSize: `${Math.round(10 * scale)}px` }}>
+              {settings.storeName || "Sua loja aqui"}
             </p>
           )}
         </div>
@@ -237,6 +241,7 @@ function ProductCard({
   offer,
   template,
   scale,
+  index,
   prominent = false,
   draggable = false,
   onDragStart,
@@ -247,6 +252,7 @@ function ProductCard({
   offer: Offer;
   template: FlyerTemplate;
   scale: number;
+  index?: number;
   prominent?: boolean;
   draggable?: boolean;
   onDragStart?: (id: string) => void;
@@ -254,6 +260,17 @@ function ProductCard({
   onDrop?: (id: string) => void;
   onDragEnd?: () => void;
 }) {
+  const imgHeight = prominent
+    ? Math.round(130 * scale)
+    : Math.round(90 * scale);
+
+  const cardShadow =
+    template.cardStyle === "shadow"
+      ? "0 4px 12px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10)"
+      : template.cardStyle === "bordered"
+        ? "none"
+        : "0 1px 4px rgba(0,0,0,0.08)";
+
   return (
     <div
       draggable={draggable}
@@ -261,79 +278,173 @@ function ProductCard({
       onDragOver={(e) => { e.preventDefault(); onDragOver?.(e); }}
       onDrop={() => onDrop?.(offer.id)}
       onDragEnd={onDragEnd}
-      className={`flex flex-col min-h-0 ${prominent ? "md:col-span-2" : ""}`}
       style={{
         backgroundColor: template.card,
-        borderColor: template.cardBorder,
+        borderColor: prominent ? template.price : template.cardBorder,
         color: template.cardText,
         borderRadius: template.radius,
-        boxShadow: prominent
-          ? "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.08)"
-          : "0 1px 3px rgba(0,0,0,0.08)",
-        borderWidth: "1px",
+        boxShadow: cardShadow,
+        borderWidth: prominent ? "2px" : "1px",
         borderStyle: "solid",
-        padding: prominent ? "16px" : "12px",
         cursor: draggable ? "grab" : "default",
-        opacity: draggable ? undefined : 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        position: "relative",
       }}
     >
-      <div className="min-w-0 flex-1">
+      {/* Número do item */}
+      {index !== undefined && (
+        <div
+          style={{
+            position: "absolute",
+            top: `${Math.round(6 * scale)}px`,
+            left: `${Math.round(6 * scale)}px`,
+            backgroundColor: template.price,
+            color: template.priceText,
+            borderRadius: `${Math.round(4 * scale)}px`,
+            fontFamily: template.headingFont,
+            fontWeight: 900,
+            fontSize: `${Math.round(9 * scale)}px`,
+            lineHeight: 1,
+            padding: `${Math.round(2 * scale)}px ${Math.round(5 * scale)}px`,
+            zIndex: 2,
+          }}
+        >
+          {String(index).padStart(2, "0")}
+        </div>
+      )}
+
+      {/* IMAGEM grande do produto */}
+      <div
+        style={{
+          height: `${imgHeight}px`,
+          backgroundColor: "rgba(255,255,255,0.55)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          flexShrink: 0,
+        }}
+      >
+        {template.showImage && offer.imageUrl ? (
+          <img
+            src={offer.imageUrl}
+            alt={offer.name}
+            style={{
+              maxHeight: "100%",
+              maxWidth: "100%",
+              objectFit: "contain",
+              padding: `${Math.round(4 * scale)}px`,
+              imageRendering: "auto",
+            }}
+          />
+        ) : (
+          <span style={{ fontSize: `${Math.round(28 * scale)}px`, opacity: 0.18 }}>🛒</span>
+        )}
+      </div>
+
+      {/* INFORMAÇÕES DO PRODUTO */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          padding: `${Math.round(6 * scale)}px ${Math.round(7 * scale)}px`,
+          gap: `${Math.round(2 * scale)}px`,
+        }}
+      >
         <p
-          className="font-bold leading-tight line-clamp-2"
           style={{
             fontFamily: template.headingFont,
+            fontWeight: 800,
             textTransform: template.uppercaseNames ? "uppercase" : "none",
-            fontSize: `${Math.round((prominent ? 16 : 12) * scale)}px`,
+            fontSize: `${Math.round((prominent ? 13 : 11) * scale)}px`,
+            lineHeight: 1.2,
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            color: template.cardText,
           }}
         >
           {offer.name}
         </p>
-        {offer.brand && (
-          <p className="text-[10px] leading-tight opacity-70 truncate mt-0.5">{offer.brand}</p>
-        )}
-        {offer.size && (
-          <p className="text-[10px] leading-tight opacity-60 truncate">{offer.size}</p>
-        )}
-      </div>
 
-      {template.showImage && offer.imageUrl && (
-        <div
-          className="mt-2 flex items-center justify-center bg-white/60 rounded-lg overflow-hidden"
-          style={{ height: prominent ? "120px" : "80px" }}
-        >
-          <img
-            src={offer.imageUrl}
-            alt={offer.name}
-            className="max-h-full max-w-full object-contain p-1"
-            style={{ imageRendering: "auto" }}
-          />
-        </div>
-      )}
-
-      <div className="mt-auto pt-2">
-        {offer.oldPrice ? (
+        {(offer.brand || offer.size) && (
           <p
-            className="text-[10px] opacity-60 line-through"
-            style={{ fontSize: `${Math.round(10 * scale)}px` }}
+            style={{
+              fontSize: `${Math.round(8 * scale)}px`,
+              opacity: 0.65,
+              lineHeight: 1.2,
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              color: template.cardText,
+            }}
           >
-            {brl(offer.oldPrice)}
+            {[offer.brand, offer.size].filter(Boolean).join(" · ")}
           </p>
-        ) : null}
-        <span
-          className="inline-block rounded-lg px-3 py-1.5 font-black"
-          style={{
-            backgroundColor: template.price,
-            color: template.priceText,
-            fontSize: `${Math.round((prominent ? 20 : 15) * scale)}px`,
-            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
-          }}
-        >
-          {brl(offer.price || 0)}
-        </span>
+        )}
+
+        {/* PREÇO GRANDE — etiqueta arredondada */}
+        <div style={{ marginTop: "auto", paddingTop: `${Math.round(4 * scale)}px` }}>
+          {offer.oldPrice ? (
+            <p
+              style={{
+                fontSize: `${Math.round(8 * scale)}px`,
+                opacity: 0.5,
+                textDecoration: "line-through",
+                lineHeight: 1,
+                marginBottom: `${Math.round(2 * scale)}px`,
+                color: template.cardText,
+              }}
+            >
+              {brl(offer.oldPrice)}
+            </p>
+          ) : null}
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "baseline",
+              gap: "1px",
+              backgroundColor: template.price,
+              color: template.priceText,
+              borderRadius: `${Math.round(8 * scale)}px`,
+              padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`,
+              boxShadow: "0 2px 6px rgba(0,0,0,0.18)",
+              lineHeight: 1,
+            }}
+          >
+            <span
+              style={{
+                fontFamily: template.headingFont,
+                fontWeight: 900,
+                fontSize: `${Math.round(8 * scale)}px`,
+                opacity: 0.85,
+                alignSelf: "flex-start",
+                marginTop: `${Math.round(2 * scale)}px`,
+              }}
+            >
+              R$
+            </span>
+            <span
+              style={{
+                fontFamily: template.headingFont,
+                fontWeight: 900,
+                fontSize: `${Math.round((prominent ? 22 : 18) * scale)}px`,
+                lineHeight: 1,
+              }}
+            >
+              {String(brl(offer.price || 0)).replace("R$\u00a0", "").replace("R$ ", "")}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
 
 function FlyerEditorPage() {
   const navigate = useNavigate();
