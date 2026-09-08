@@ -3,6 +3,7 @@
     "0": [
       "jspdf",
       "ref_lucide_react",
+      "ref_radix_ui_react_alert_dialog",
       "ref_radix_ui_react_slider",
       "ref_radix_ui_react_switch",
       "ref_react",
@@ -13,16 +14,29 @@
       "src_components_auth_view_minimalsession",
       "src_components_auth_view_useauthsession",
       "src_components_flyer_create_dialog",
+      "src_components_flyer_create_dialog_blobtobase64",
+      "src_components_flyer_create_dialog_flyercreatedialog",
+      "src_components_flyer_create_dialog_flyercreatedialog_handlesubmit",
+      "src_components_flyer_create_dialog_flyercreatedialog_togglerecording",
       "src_components_flyer_create_dialog_flyercreatedialogprops",
       "src_components_flyer_create_dialog_message",
-      "src_components_offer_import_dialog",
-      "src_components_offer_import_dialog_message",
-      "src_components_offer_import_dialog_offerimportdialogprops",
-      "src_components_product_image_dialog",
-      "src_components_product_image_dialog_message",
-      "src_components_product_image_dialog_productimagedialogprops",
+      "src_components_flyer_create_dialog_messagefor",
+      "src_components_flyer_create_dialog_tonewoffers",
+      "src_components_ui_alert_dialog",
+      "src_components_ui_alert_dialog_alertdialogaction",
+      "src_components_ui_alert_dialog_alertdialogcancel",
+      "src_components_ui_alert_dialog_alertdialogcontent",
+      "src_components_ui_alert_dialog_alertdialogdescription",
+      "src_components_ui_alert_dialog_alertdialogfooter",
+      "src_components_ui_alert_dialog_alertdialogheader",
+      "src_components_ui_alert_dialog_alertdialogoverlay",
+      "src_components_ui_alert_dialog_alertdialogtitle",
       "src_components_ui_button",
       "src_components_ui_button_button",
+      "src_components_ui_button_buttonvariants",
+      "src_components_ui_calendar",
+      "src_components_ui_calendar_calendar",
+      "src_components_ui_calendar_calendardaybutton",
       "src_components_ui_card",
       "src_components_ui_card_card",
       "src_components_ui_card_cardcontent",
@@ -30,26 +44,13 @@
       "src_components_ui_card_cardfooter",
       "src_components_ui_card_cardheader",
       "src_components_ui_card_cardtitle",
-      "src_components_ui_dialog",
-      "src_components_ui_dialog_dialogcontent",
-      "src_components_ui_dialog_dialogdescription",
-      "src_components_ui_dialog_dialogfooter",
-      "src_components_ui_dialog_dialogheader",
-      "src_components_ui_dialog_dialogoverlay",
-      "src_components_ui_dialog_dialogtitle",
       "src_components_ui_input",
       "src_components_ui_input_input",
-      "src_components_ui_label",
-      "src_components_ui_label_label",
-      "src_components_ui_label_labelvariants",
+      "src_components_ui_pagination_paginationlink",
       "src_components_ui_slider",
       "src_components_ui_slider_slider",
       "src_components_ui_switch",
       "src_components_ui_switch_switch",
-      "src_components_ui_tabs",
-      "src_components_ui_tabs_tabscontent",
-      "src_components_ui_tabs_tabslist",
-      "src_components_ui_tabs_tabstrigger",
       "src_components_ui_textarea",
       "src_components_ui_textarea_textarea",
       "src_integrations_supabase_client_supabase",
@@ -60,7 +61,9 @@
       "src_lib_flyer_types_flyersettings",
       "src_lib_flyer_types_formatbyid",
       "src_lib_flyer_types_formats",
+      "src_lib_flyer_types_newid",
       "src_lib_flyer_types_offer",
+      "src_lib_flyer_types_paginate",
       "src_lib_flyer_types_per_page_options",
       "src_lib_flyer_types_priceparts",
       "src_lib_flyer_types_title_presets",
@@ -69,6 +72,7 @@
       "src_lib_store_profile_fetchstoreprofile",
       "src_lib_store_profile_savestoreprofile",
       "src_lib_store_profile_storeprofile",
+      "src_lib_store_profile_storeprofiletosettings",
       "src_lib_templates",
       "src_lib_templates_flyertemplate",
       "src_lib_templates_templatebyid",
@@ -85,33 +89,56 @@
       "src_routes_flyers_flyerthumb",
       "src_routes_loja",
       "src_routes_loja_storepage",
+      "src_routes_loja_storepage_handlecreatelogo",
       "src_routes_loja_storepage_handlelogofile",
       "src_routes_loja_storepage_handlesave",
       "src_routes_loja_storepage_set"
     ],
     "1": [
-      "ref_jspdf",
+      "ref_cmdk",
+      "ref_radix_ui_react_tabs",
       "ref_zod",
-      "src_components_flyer_create_dialog_blobtobase64",
-      "src_components_flyer_create_dialog_flyercreatedialog",
-      "src_components_flyer_create_dialog_flyercreatedialog_handlesubmit",
-      "src_components_flyer_create_dialog_flyercreatedialog_togglerecording",
-      "src_components_flyer_create_dialog_messagefor",
-      "src_components_flyer_create_dialog_tonewoffers",
+      "src_components_offer_import_dialog",
       "src_components_offer_import_dialog_blobtobase64",
+      "src_components_offer_import_dialog_message",
       "src_components_offer_import_dialog_messagefor",
       "src_components_offer_import_dialog_offerimportdialog",
       "src_components_offer_import_dialog_offerimportdialog_addimportedfromdraft",
       "src_components_offer_import_dialog_offerimportdialog_applycommand",
       "src_components_offer_import_dialog_offerimportdialog_handleopenchange",
       "src_components_offer_import_dialog_offerimportdialog_togglerecording",
+      "src_components_offer_import_dialog_offerimportdialogprops",
       "src_components_offer_import_dialog_tonewoffers",
+      "src_components_product_image_dialog",
       "src_components_product_image_dialog_filetodataurl",
+      "src_components_product_image_dialog_message",
       "src_components_product_image_dialog_productimagedialog",
       "src_components_product_image_dialog_productimagedialog_handlefiles",
       "src_components_product_image_dialog_productimagedialog_handlegenerate",
       "src_components_product_image_dialog_productimagedialog_usecandidate",
+      "src_components_product_image_dialog_productimagedialogprops",
       "src_components_product_image_dialog_removebackground",
+      "src_components_ui_command",
+      "src_components_ui_command_command",
+      "src_components_ui_command_commanddialog",
+      "src_components_ui_command_commandempty",
+      "src_components_ui_command_commandgroup",
+      "src_components_ui_command_commandinput",
+      "src_components_ui_command_commanditem",
+      "src_components_ui_command_commandlist",
+      "src_components_ui_command_commandseparator",
+      "src_components_ui_command_commandshortcut",
+      "src_components_ui_dialog",
+      "src_components_ui_dialog_dialogcontent",
+      "src_components_ui_dialog_dialogdescription",
+      "src_components_ui_dialog_dialogfooter",
+      "src_components_ui_dialog_dialogheader",
+      "src_components_ui_dialog_dialogoverlay",
+      "src_components_ui_dialog_dialogtitle",
+      "src_components_ui_tabs",
+      "src_components_ui_tabs_tabscontent",
+      "src_components_ui_tabs_tabslist",
+      "src_components_ui_tabs_tabstrigger",
       "src_lib_ai_functions",
       "src_lib_ai_functions_aiproviderconfig",
       "src_lib_ai_functions_callaudiotranscription",
@@ -121,6 +148,7 @@
       "src_lib_ai_functions_extractjson",
       "src_lib_ai_functions_firsttext",
       "src_lib_ai_functions_generateproductimage",
+      "src_lib_ai_functions_generatestorelogo",
       "src_lib_ai_functions_getaiconfig",
       "src_lib_ai_functions_logusage",
       "src_lib_ai_functions_organizeflyer",
@@ -129,8 +157,6 @@
       "src_lib_ai_functions_transcribeoffers",
       "src_lib_ai_functions_validateproductimage",
       "src_lib_ai_functions_verifyflyer",
-      "src_lib_flyer_types_newid",
-      "src_lib_flyer_types_paginate",
       "src_lib_images_functions",
       "src_lib_images_functions_imagecandidate",
       "src_lib_images_functions_importimage",
@@ -139,25 +165,7 @@
       "src_lib_images_functions_scorecandidate",
       "src_lib_images_functions_searchopenfoodfacts",
       "src_lib_images_functions_searchproductimages",
-      "src_lib_images_functions_tokens",
-      "src_lib_store_profile_storeprofiletosettings",
-      "src_routes_flyers_flyerid_flyereditorpage",
-      "src_routes_flyers_flyerid_flyereditorpage_addoffer",
-      "src_routes_flyers_flyerid_flyereditorpage_deleteoffer",
-      "src_routes_flyers_flyerid_flyereditorpage_exportjpg",
-      "src_routes_flyers_flyerid_flyereditorpage_exportpdf",
-      "src_routes_flyers_flyerid_flyereditorpage_exportpng",
-      "src_routes_flyers_flyerid_flyereditorpage_handleaddimported",
-      "src_routes_flyers_flyerid_flyereditorpage_handlefixwithai",
-      "src_routes_flyers_flyerid_flyereditorpage_handleimagegenerated",
-      "src_routes_flyers_flyerid_flyereditorpage_handleorganize",
-      "src_routes_flyers_flyerid_flyereditorpage_handlereplacepage",
-      "src_routes_flyers_flyerid_flyereditorpage_handleverify",
-      "src_routes_flyers_flyerid_flyereditorpage_nextpage",
-      "src_routes_flyers_flyerid_flyereditorpage_persistnow",
-      "src_routes_flyers_flyerid_flyereditorpage_prevpage",
-      "src_routes_flyers_flyerid_flyereditorpage_setactivepageitems",
-      "src_routes_flyers_flyerid_flyereditorpage_updateoffer"
+      "src_lib_images_functions_tokens"
     ],
     "2": [
       "package_dependencies",
@@ -382,8 +390,8 @@
       "ref_nitro",
       "ref_prettier",
       "ref_radix_ui_react_separator",
-      "ref_radix_ui_react_tabs",
       "ref_radix_ui_react_tooltip",
+      "ref_react_day_picker",
       "ref_react_dom",
       "ref_tailwindcss",
       "ref_tailwindcss_vite",
@@ -399,24 +407,22 @@
     ],
     "8": [
       "ref_clsx",
-      "ref_input_otp",
       "ref_radix_ui_react_hover_card",
       "ref_radix_ui_react_popover",
       "ref_radix_ui_react_progress",
+      "ref_radix_ui_react_radio_group",
       "ref_radix_ui_react_scroll_area",
       "ref_react_resizable_panels",
       "ref_tailwind_merge",
       "src_components_ui_hover_card",
       "src_components_ui_hover_card_hovercardcontent",
-      "src_components_ui_input_otp",
-      "src_components_ui_input_otp_inputotp",
-      "src_components_ui_input_otp_inputotpgroup",
-      "src_components_ui_input_otp_inputotpseparator",
-      "src_components_ui_input_otp_inputotpslot",
       "src_components_ui_popover",
       "src_components_ui_popover_popovercontent",
       "src_components_ui_progress",
       "src_components_ui_progress_progress",
+      "src_components_ui_radio_group",
+      "src_components_ui_radio_group_radiogroup",
+      "src_components_ui_radio_group_radiogroupitem",
       "src_components_ui_resizable",
       "src_components_ui_resizable_resizablehandle",
       "src_components_ui_resizable_resizablepanelgroup",
@@ -426,33 +432,6 @@
       "src_lib_utils"
     ],
     "9": [
-      "ref_radix_ui_react_alert_dialog",
-      "ref_react_day_picker",
-      "src_components_ui_alert_dialog",
-      "src_components_ui_alert_dialog_alertdialogaction",
-      "src_components_ui_alert_dialog_alertdialogcancel",
-      "src_components_ui_alert_dialog_alertdialogcontent",
-      "src_components_ui_alert_dialog_alertdialogdescription",
-      "src_components_ui_alert_dialog_alertdialogfooter",
-      "src_components_ui_alert_dialog_alertdialogheader",
-      "src_components_ui_alert_dialog_alertdialogoverlay",
-      "src_components_ui_alert_dialog_alertdialogtitle",
-      "src_components_ui_button_buttonprops",
-      "src_components_ui_button_buttonvariants",
-      "src_components_ui_calendar",
-      "src_components_ui_calendar_calendar",
-      "src_components_ui_calendar_calendardaybutton",
-      "src_components_ui_pagination",
-      "src_components_ui_pagination_pagination",
-      "src_components_ui_pagination_paginationcontent",
-      "src_components_ui_pagination_paginationellipsis",
-      "src_components_ui_pagination_paginationitem",
-      "src_components_ui_pagination_paginationlink",
-      "src_components_ui_pagination_paginationlinkprops",
-      "src_components_ui_pagination_paginationnext",
-      "src_components_ui_pagination_paginationprevious"
-    ],
-    "10": [
       "tsconfig",
       "tsconfig_compileroptions",
       "tsconfig_compileroptions_allowimportingtsextensions",
@@ -478,7 +457,7 @@
       "tsconfig_compileroptions_verbatimmodulesyntax",
       "tsconfig_include"
     ],
-    "11": [
+    "10": [
       "ref_tanstack_react_start",
       "server_entry",
       "src_integrations_supabase_auth_attacher",
@@ -503,7 +482,7 @@
       "src_start_csrfmiddleware",
       "src_start_errormiddleware"
     ],
-    "12": [
+    "11": [
       "components",
       "components_aliases",
       "components_aliases_components",
@@ -524,28 +503,7 @@
       "components_tailwind_prefix",
       "components_tsx"
     ],
-    "13": [
-      "ref_class_variance_authority",
-      "ref_radix_ui_react_toggle",
-      "ref_radix_ui_react_toggle_group",
-      "src_components_ui_alert",
-      "src_components_ui_alert_alert",
-      "src_components_ui_alert_alertdescription",
-      "src_components_ui_alert_alerttitle",
-      "src_components_ui_alert_alertvariants",
-      "src_components_ui_badge",
-      "src_components_ui_badge_badge",
-      "src_components_ui_badge_badgeprops",
-      "src_components_ui_badge_badgevariants",
-      "src_components_ui_toggle",
-      "src_components_ui_toggle_group",
-      "src_components_ui_toggle_group_togglegroup",
-      "src_components_ui_toggle_group_togglegroupcontext",
-      "src_components_ui_toggle_group_togglegroupitem",
-      "src_components_ui_toggle_toggle",
-      "src_components_ui_toggle_togglevariants"
-    ],
-    "14": [
+    "12": [
       "package_devdependencies",
       "package_devdependencies_eslint",
       "package_devdependencies_eslint_config_prettier",
@@ -565,7 +523,27 @@
       "package_devdependencies_vite",
       "package_devdependencies_vitejs_plugin_react"
     ],
-    "15": [
+    "13": [
+      "ref_jspdf",
+      "src_routes_flyers_flyerid_flyereditorpage",
+      "src_routes_flyers_flyerid_flyereditorpage_addoffer",
+      "src_routes_flyers_flyerid_flyereditorpage_deleteoffer",
+      "src_routes_flyers_flyerid_flyereditorpage_exportjpg",
+      "src_routes_flyers_flyerid_flyereditorpage_exportpdf",
+      "src_routes_flyers_flyerid_flyereditorpage_exportpng",
+      "src_routes_flyers_flyerid_flyereditorpage_handleaddimported",
+      "src_routes_flyers_flyerid_flyereditorpage_handlefixwithai",
+      "src_routes_flyers_flyerid_flyereditorpage_handleimagegenerated",
+      "src_routes_flyers_flyerid_flyereditorpage_handleorganize",
+      "src_routes_flyers_flyerid_flyereditorpage_handlereplacepage",
+      "src_routes_flyers_flyerid_flyereditorpage_handleverify",
+      "src_routes_flyers_flyerid_flyereditorpage_nextpage",
+      "src_routes_flyers_flyerid_flyereditorpage_persistnow",
+      "src_routes_flyers_flyerid_flyereditorpage_prevpage",
+      "src_routes_flyers_flyerid_flyereditorpage_setactivepageitems",
+      "src_routes_flyers_flyerid_flyereditorpage_updateoffer"
+    ],
+    "14": [
       "ref_radix_ui_react_menubar",
       "src_components_ui_menubar",
       "src_components_ui_menubar_menubar",
@@ -585,6 +563,25 @@
       "src_components_ui_menubar_menubarsubtrigger",
       "src_components_ui_menubar_menubartrigger"
     ],
+    "15": [
+      "ref_radix_ui_react_label",
+      "ref_react_hook_form",
+      "src_components_ui_form",
+      "src_components_ui_form_formcontrol",
+      "src_components_ui_form_formdescription",
+      "src_components_ui_form_formfield",
+      "src_components_ui_form_formfieldcontext",
+      "src_components_ui_form_formfieldcontextvalue",
+      "src_components_ui_form_formitem",
+      "src_components_ui_form_formitemcontext",
+      "src_components_ui_form_formitemcontextvalue",
+      "src_components_ui_form_formlabel",
+      "src_components_ui_form_formmessage",
+      "src_components_ui_form_useformfield",
+      "src_components_ui_label",
+      "src_components_ui_label_label",
+      "src_components_ui_label_labelvariants"
+    ],
     "16": [
       "ref_embla_carousel_react",
       "src_components_ui_carousel",
@@ -603,22 +600,6 @@
       "src_components_ui_carousel_usecarouselparameters"
     ],
     "17": [
-      "ref_radix_ui_react_label",
-      "ref_react_hook_form",
-      "src_components_ui_form",
-      "src_components_ui_form_formcontrol",
-      "src_components_ui_form_formdescription",
-      "src_components_ui_form_formfield",
-      "src_components_ui_form_formfieldcontext",
-      "src_components_ui_form_formfieldcontextvalue",
-      "src_components_ui_form_formitem",
-      "src_components_ui_form_formitemcontext",
-      "src_components_ui_form_formitemcontextvalue",
-      "src_components_ui_form_formlabel",
-      "src_components_ui_form_formmessage",
-      "src_components_ui_form_useformfield"
-    ],
-    "18": [
       "ref_recharts",
       "src_components_ui_chart",
       "src_components_ui_chart_chartconfig",
@@ -632,20 +613,19 @@
       "src_components_ui_chart_themes",
       "src_components_ui_chart_usechart"
     ],
-    "19": [
-      "ref_cmdk",
-      "src_components_ui_command",
-      "src_components_ui_command_command",
-      "src_components_ui_command_commanddialog",
-      "src_components_ui_command_commandempty",
-      "src_components_ui_command_commandgroup",
-      "src_components_ui_command_commandinput",
-      "src_components_ui_command_commanditem",
-      "src_components_ui_command_commandlist",
-      "src_components_ui_command_commandseparator",
-      "src_components_ui_command_commandshortcut"
+    "18": [
+      "ref_class_variance_authority",
+      "ref_radix_ui_react_toggle",
+      "ref_radix_ui_react_toggle_group",
+      "src_components_ui_toggle",
+      "src_components_ui_toggle_group",
+      "src_components_ui_toggle_group_togglegroup",
+      "src_components_ui_toggle_group_togglegroupcontext",
+      "src_components_ui_toggle_group_togglegroupitem",
+      "src_components_ui_toggle_toggle",
+      "src_components_ui_toggle_togglevariants"
     ],
-    "20": [
+    "19": [
       "ref_radix_ui_react_dialog",
       "src_components_ui_sheet",
       "src_components_ui_sheet_sheetcontent",
@@ -657,7 +637,7 @@
       "src_components_ui_sheet_sheettitle",
       "src_components_ui_sheet_sheetvariants"
     ],
-    "21": [
+    "20": [
       "ref_radix_ui_react_navigation_menu",
       "src_components_ui_navigation_menu",
       "src_components_ui_navigation_menu_navigationmenu",
@@ -668,7 +648,7 @@
       "src_components_ui_navigation_menu_navigationmenutriggerstyle",
       "src_components_ui_navigation_menu_navigationmenuviewport"
     ],
-    "22": [
+    "21": [
       "ref_radix_ui_react_select",
       "src_components_ui_select",
       "src_components_ui_select_selectcontent",
@@ -679,7 +659,7 @@
       "src_components_ui_select_selectseparator",
       "src_components_ui_select_selecttrigger"
     ],
-    "23": [
+    "22": [
       "ref_radix_ui_react_slot",
       "src_components_ui_breadcrumb",
       "src_components_ui_breadcrumb_breadcrumb",
@@ -690,7 +670,7 @@
       "src_components_ui_breadcrumb_breadcrumbpage",
       "src_components_ui_breadcrumb_breadcrumbseparator"
     ],
-    "24": [
+    "23": [
       "ref_vaul",
       "src_components_ui_drawer",
       "src_components_ui_drawer_drawer",
@@ -700,6 +680,17 @@
       "src_components_ui_drawer_drawerheader",
       "src_components_ui_drawer_draweroverlay",
       "src_components_ui_drawer_drawertitle"
+    ],
+    "24": [
+      "src_components_ui_button_buttonprops",
+      "src_components_ui_pagination",
+      "src_components_ui_pagination_pagination",
+      "src_components_ui_pagination_paginationcontent",
+      "src_components_ui_pagination_paginationellipsis",
+      "src_components_ui_pagination_paginationitem",
+      "src_components_ui_pagination_paginationlinkprops",
+      "src_components_ui_pagination_paginationnext",
+      "src_components_ui_pagination_paginationprevious"
     ],
     "25": [
       "package_scripts",
@@ -719,96 +710,113 @@
       "ref_typescript_eslint"
     ],
     "27": [
+      "ref_input_otp",
+      "src_components_ui_input_otp",
+      "src_components_ui_input_otp_inputotp",
+      "src_components_ui_input_otp_inputotpgroup",
+      "src_components_ui_input_otp_inputotpseparator",
+      "src_components_ui_input_otp_inputotpslot"
+    ],
+    "28": [
       "ref_radix_ui_react_accordion",
       "src_components_ui_accordion",
       "src_components_ui_accordion_accordioncontent",
       "src_components_ui_accordion_accordionitem",
       "src_components_ui_accordion_accordiontrigger"
     ],
-    "28": [
+    "29": [
       "ref_radix_ui_react_avatar",
       "src_components_ui_avatar",
       "src_components_ui_avatar_avatar",
       "src_components_ui_avatar_avatarfallback",
       "src_components_ui_avatar_avatarimage"
     ],
-    "29": [
-      "ref_radix_ui_react_radio_group",
-      "src_components_ui_radio_group",
-      "src_components_ui_radio_group_radiogroup",
-      "src_components_ui_radio_group_radiogroupitem"
-    ],
     "30": [
+      "src_components_ui_alert",
+      "src_components_ui_alert_alert",
+      "src_components_ui_alert_alertdescription",
+      "src_components_ui_alert_alerttitle",
+      "src_components_ui_alert_alertvariants"
+    ],
+    "31": [
       "ref_sonner",
       "src_components_ui_sonner",
       "src_components_ui_sonner_toaster",
       "src_components_ui_sonner_toasterprops"
     ],
-    "31": [
+    "32": [
+      "src_components_ui_badge",
+      "src_components_ui_badge_badge",
+      "src_components_ui_badge_badgeprops",
+      "src_components_ui_badge_badgevariants"
+    ],
+    "33": [
       "node_crypto",
       "src_integrations_supabase_cron_auth",
       "src_integrations_supabase_cron_auth_authenticatecronrequest"
     ],
-    "32": [
+    "34": [
       "ref_radix_ui_react_checkbox",
       "src_components_ui_checkbox",
       "src_components_ui_checkbox_checkbox"
     ],
-    "33": [
+    "35": [
       "package_overrides",
       "package_overrides_rolldown"
     ],
-    "34": [
+    "36": [
       "ref_lovable_dev_vite_tanstack_config",
       "vite_config"
     ],
-    "35": [
+    "37": [
       "ref_radix_ui_react_aspect_ratio",
       "src_components_ui_aspect_ratio"
     ],
-    "36": [
+    "38": [
       "ref_radix_ui_react_collapsible",
       "src_components_ui_collapsible"
     ]
   },
   "cohesion": {
-    "0": 0.0636193531141406,
-    "1": 0.056189640035118525,
+    "0": 0.05255613951266125,
+    "1": 0.05835010060362173,
     "2": 0.03508771929824561,
     "3": 0.07396870554765292,
     "4": 0.07142857142857142,
     "5": 0.08403361344537816,
     "6": 0.11491935483870967,
     "7": 0.07142857142857142,
-    "8": 0.07692307692307693,
-    "9": 0.09666666666666666,
-    "10": 0.08333333333333333,
-    "11": 0.1422924901185771,
-    "12": 0.10526315789473684,
-    "13": 0.14035087719298245,
+    "8": 0.08333333333333333,
+    "9": 0.08333333333333333,
+    "10": 0.1422924901185771,
+    "11": 0.10526315789473684,
+    "12": 0.1111111111111111,
+    "13": 0.1503267973856209,
     "14": 0.1111111111111111,
-    "15": 0.1111111111111111,
+    "15": 0.16911764705882354,
     "16": 0.17142857142857143,
-    "17": 0.18681318681318682,
-    "18": 0.22727272727272727,
-    "19": 0.18181818181818182,
-    "20": 0.2222222222222222,
-    "21": 0.25,
+    "17": 0.22727272727272727,
+    "18": 0.28888888888888886,
+    "19": 0.2222222222222222,
+    "20": 0.25,
+    "21": 0.2222222222222222,
     "22": 0.2222222222222222,
     "23": 0.2222222222222222,
     "24": 0.2222222222222222,
     "25": 0.2857142857142857,
     "26": 0.3333333333333333,
-    "27": 0.4,
+    "27": 0.3333333333333333,
     "28": 0.4,
-    "29": 0.5,
+    "29": 0.4,
     "30": 0.5,
-    "31": 0.6666666666666666,
+    "31": 0.5,
     "32": 0.6666666666666666,
-    "33": 1.0,
-    "34": 1.0,
+    "33": 0.6666666666666666,
+    "34": 0.6666666666666666,
     "35": 1.0,
-    "36": 1.0
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0
   },
   "gods": [
     {
@@ -857,9 +865,9 @@
       "degree": 9
     },
     {
-      "id": "src_integrations_supabase_client_supabase",
-      "label": "supabase",
-      "degree": 8
+      "id": "src_lib_ai_functions_logusage",
+      "label": "logUsage()",
+      "degree": 9
     }
   ],
   "surprises": [
