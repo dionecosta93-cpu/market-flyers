@@ -93,6 +93,30 @@ function StorePage() {
     reader.readAsDataURL(file);
   }
 
+  async function handleCreateLogo() {
+    const storeName = profile.store_name.trim();
+    if (storeName.length < 2) {
+      setMessage({ type: "err", text: "Escreva o nome do mercado antes de criar a logo." });
+      return;
+    }
+    setCreatingLogo(true);
+    setMessage(null);
+    try {
+      const result = await generateStoreLogo({ data: { storeName } });
+      set("logo_url", result.dataUrl);
+      setMessage({
+        type: "ok",
+        text: "Logo criada. Se gostou, clique em salvar para usá-la nos encartes.",
+      });
+    } catch {
+      setMessage({ type: "err", text: "Não conseguimos criar a logo agora. Tente novamente." });
+    } finally {
+      setCreatingLogo(false);
+    }
+  }
+
+
+
   async function handleSave() {
     if (!userId) return;
     setSaving(true);
