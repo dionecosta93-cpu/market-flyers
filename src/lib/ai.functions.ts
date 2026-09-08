@@ -349,6 +349,27 @@ async function callImageGeneration(prompt: string): Promise<string> {
   }
 }
 
+/** Cria uma logo exclusiva e profissional para o mercado, usando o nome do cadastro. */
+export const generateStoreLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { storeName: string }) =>
+    z.object({ storeName: z.string().min(2).max(60) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const prompt = `Crie uma LOGOMARCA profissional e exclusiva de supermercado brasileiro.
+O nome escrito na logo deve ser exatamente: "${data.storeName}".
+Regras obrigatórias:
+- Texto perfeitamente legível, sem erros de ortografia, sem letras trocadas.
+- Estilo moderno de varejo: formas simples, tipografia forte em negrito, um ícone simbólico simples (sacola, carrinho, folha ou cesta).
+- Cores de varejo: vermelho, amarelo, verde, branco ou azul escuro. Alto contraste.
+- Fundo branco puro e liso, logo centralizada, com margem em volta.
+- Vetorial e limpa (estilo flat), sem fotografia, sem sombras realistas, sem moldura, sem texto extra além do nome.`;
+
+    const dataUrl = await callImageGeneration(prompt);
+    await logUsage(context.userId, "imagem", { logo: data.storeName });
+    return { dataUrl };
+  });
+
 /** Audio (base64) -> transcrição com Whisper / IA */
 export const transcribeOffers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
