@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ImagePlus, Loader2, Save, Store, Trash2 } from "lucide-react";
+import { ChevronLeft, ImagePlus, Loader2, Save, Sparkles, Store, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AuthView, useAuthSession } from "@/components/auth-view";
+import { generateStoreLogo } from "@/lib/ai.functions";
 import {
   EMPTY_STORE_PROFILE,
   fetchStoreProfile,
@@ -46,6 +47,7 @@ function StorePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [creatingLogo, setCreatingLogo] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -90,6 +92,30 @@ function StorePage() {
     reader.onerror = () => setMessage({ type: "err", text: "Não foi possível ler a imagem." });
     reader.readAsDataURL(file);
   }
+
+  async function handleCreateLogo() {
+    const storeName = profile.store_name.trim();
+    if (storeName.length < 2) {
+      setMessage({ type: "err", text: "Escreva o nome do mercado antes de criar a logo." });
+      return;
+    }
+    setCreatingLogo(true);
+    setMessage(null);
+    try {
+      const result = await generateStoreLogo({ data: { storeName } });
+      set("logo_url", result.dataUrl);
+      setMessage({
+        type: "ok",
+        text: "Logo criada. Se gostou, clique em salvar para usá-la nos encartes.",
+      });
+    } catch {
+      setMessage({ type: "err", text: "Não conseguimos criar a logo agora. Tente novamente." });
+    } finally {
+      setCreatingLogo(false);
+    }
+  }
+
+
 
   async function handleSave() {
     if (!userId) return;
@@ -172,6 +198,20 @@ function StorePage() {
                     >
                       <ImagePlus className="w-4 h-4" />
                       {profile.logo_url ? "Trocar logo" : "Enviar logo"}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="gap-1.5"
+                      onClick={handleCreateLogo}
+                      disabled={creatingLogo}
+                    >
+                      {creatingLogo ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-4 h-4" />
+                      )}
+                      Criar logo com IA
                     </Button>
                     {profile.logo_url && (
                       <Button
